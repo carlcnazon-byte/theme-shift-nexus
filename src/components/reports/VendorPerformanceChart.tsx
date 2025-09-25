@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface VendorPerformanceData {
   vendor: string;
@@ -15,14 +15,8 @@ export const VendorPerformanceChart: React.FC<VendorPerformanceChartProps> = ({ 
   // Sort data by jobs completed (descending) and take top 8
   const sortedData = [...data].sort((a, b) => b.jobs - a.jobs).slice(0, 8);
 
-  // Get gradient color based on position (rank)
-  const getBarColor = (index: number) => {
-    const intensity = 1 - (index / (sortedData.length - 1)) * 0.6; // From 1.0 to 0.4
-    return `hsl(220 91% ${Math.round(45 + intensity * 20)}%)`; // Blue gradient from dark to light
-  };
-
   const formatVendorName = (name: string) => {
-    return name.length > 20 ? `${name.substring(0, 17)}...` : name;
+    return name.length > 25 ? `${name.substring(0, 22)}...` : name;
   };
 
   const CustomTooltip = ({ active, payload }: any) => {
@@ -40,74 +34,55 @@ export const VendorPerformanceChart: React.FC<VendorPerformanceChartProps> = ({ 
     return null;
   };
 
-  const CustomLabel = (props: any) => {
-    const { x, y, width, height, value, payload } = props;
-    
-    // Add null checks and fallback
-    if (!payload || !payload.vendor) {
-      return null;
-    }
-    
-    const vendorName = formatVendorName(payload.vendor);
-    
-    return (
-      <text
-        x={x + 12}
-        y={y + height / 2}
-        fill="white"
-        fontSize={12}
-        fontWeight={500}
-        textAnchor="start"
-        dominantBaseline="middle"
-      >
-        {vendorName}
-      </text>
-    );
-  };
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-foreground">Top Vendor Performance</h3>
-          <p className="text-sm text-muted-foreground">{sortedData.length} vendors</p>
-        </div>
+      <div>
+        <h3 className="text-xl font-semibold text-foreground">Top Vendor Performance</h3>
+        <p className="text-sm text-muted-foreground mt-1">Jobs completed by top {sortedData.length} vendors</p>
       </div>
 
       {/* Chart */}
-      <div className="h-80">
+      <div className="h-96 bg-background">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
             data={sortedData} 
             layout="horizontal"
-            margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
+            margin={{ top: 20, right: 30, left: 120, bottom: 20 }}
+            barCategoryGap="20%"
           >
+            <CartesianGrid 
+              strokeDasharray="3 3" 
+              stroke="hsl(var(--muted))" 
+              strokeOpacity={0.3}
+              horizontal={true}
+              vertical={false}
+            />
             <XAxis 
               type="number"
               axisLine={false}
               tickLine={false}
-              tick={false}
+              tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+              tickMargin={8}
             />
             <YAxis 
               type="category"
+              dataKey="vendor"
               axisLine={false}
               tickLine={false}
-              tick={false}
-              width={0}
+              tick={{ fontSize: 12, fill: 'hsl(var(--foreground))' }}
+              tickFormatter={formatVendorName}
+              width={110}
+              tickMargin={8}
             />
             <Tooltip content={<CustomTooltip />} />
             
             <Bar 
               dataKey="jobs" 
-              radius={[0, 6, 6, 0]}
+              fill="hsl(var(--primary))"
+              radius={[0, 8, 8, 0]}
               stroke="none"
-            >
-              <LabelList content={<CustomLabel />} />
-              {sortedData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={getBarColor(index)} />
-              ))}
-            </Bar>
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
