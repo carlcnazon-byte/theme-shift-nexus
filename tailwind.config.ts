@@ -57,6 +57,30 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Property Management Theme Colors
+        dashboard: "hsl(var(--dashboard-bg))",
+        panel: "hsl(var(--panel-bg))",
+        "text-primary": "hsl(var(--text-primary))",
+        "text-secondary": "hsl(var(--text-secondary))",
+        "border-subtle": "hsl(var(--border-subtle))",
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+        info: "hsl(var(--info))",
+      },
+      backgroundImage: {
+        "accent-gradient": "linear-gradient(135deg, hsl(var(--accent-gradient-from)), hsl(var(--accent-gradient-to)))",
+        "panel-gradient": "linear-gradient(145deg, hsl(var(--panel-bg)), hsl(var(--card)))",
+      },
+      boxShadow: {
+        "panel": "0 4px 20px hsl(var(--panel-shadow))",
+        "hover-glow": "0 0 25px hsl(var(--hover-glow))",
+        "theme": "0 2px 10px hsl(var(--panel-shadow))",
+      },
+      backdropBlur: {
+        "panel": "8px",
+      },
+      transitionProperty: {
+        "theme": "color, background-color, border-color, box-shadow, backdrop-filter",
       },
       borderRadius: {
         lg: "var(--radius)",
