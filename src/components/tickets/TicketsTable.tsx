@@ -103,10 +103,10 @@ export const TicketsTable: React.FC<TicketsTableProps> = ({ tickets, onTicketSel
               <SortableHeader field="property_name">Property</SortableHeader>
             </TableHead>
             <TableHead className="min-w-48">Issue Description</TableHead>
-            <TableHead className="w-36">
+            <TableHead className="w-36 text-center">
               <SortableHeader field="urgency">Urgency</SortableHeader>
             </TableHead>
-            <TableHead className="w-36">
+            <TableHead className="w-36 text-center">
               <SortableHeader field="status">Status</SortableHeader>
             </TableHead>
             <TableHead className="w-48">Assigned Vendor</TableHead>
