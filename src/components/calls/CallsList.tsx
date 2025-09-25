@@ -2,8 +2,8 @@ import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Phone, PhoneIncoming, PhoneOutgoing, PhoneMissed, Clock, FileText, Ticket, Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { CallStatusChip } from '@/components/ui/call-status-chip';
 import { Call } from '@/pages/Calls';
 
 interface CallsListProps {
@@ -27,16 +27,7 @@ export const CallsList: React.FC<CallsListProps> = ({ calls, selectedCall, onCal
   };
 
   const getStatusBadge = (call: Call) => {
-    switch (call.status) {
-      case 'completed':
-        return <Badge className="bg-green-500/20 text-green-300">Completed</Badge>;
-      case 'missed':
-        return <Badge className="bg-red-500/20 text-red-300">Missed</Badge>;
-      case 'voicemail':
-        return <Badge className="bg-amber-500/20 text-amber-300">Voicemail</Badge>;
-      default:
-        return null;
-    }
+    return <CallStatusChip status={call.status} />;
   };
 
   const formatDuration = (seconds: number) => {
