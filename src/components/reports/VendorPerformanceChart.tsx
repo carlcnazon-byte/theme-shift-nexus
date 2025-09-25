@@ -42,6 +42,12 @@ export const VendorPerformanceChart: React.FC<VendorPerformanceChartProps> = ({ 
 
   const CustomLabel = (props: any) => {
     const { x, y, width, height, value, payload } = props;
+    
+    // Add null checks and fallback
+    if (!payload || !payload.vendor) {
+      return null;
+    }
+    
     const vendorName = formatVendorName(payload.vendor);
     
     return (
