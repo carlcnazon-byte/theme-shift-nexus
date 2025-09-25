@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LabelList } from 'recharts';
 import { Badge } from '@/components/ui/badge';
 
 interface ResponseTimeData {
@@ -56,25 +56,18 @@ export const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({ data }) =>
     return null;
   };
 
-  const CustomBar = (props: any) => {
-    const { fill, ...rest } = props;
-    const color = getBarColor(props.payload.avgTime, props.payload.target);
-    return <Bar {...rest} fill={color} />;
-  };
-
-  const CustomLabel = (props: any) => {
-    const { x, y, width, value } = props;
+  const CustomLegend = (props: any) => {
     return (
-      <text 
-        x={x + width / 2} 
-        y={y - 5} 
-        fill="hsl(var(--foreground))" 
-        textAnchor="middle" 
-        fontSize={12}
-        fontWeight="medium"
-      >
-        {`${value} min`}
-      </text>
+      <div className="flex justify-center gap-6 mb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-blue-500" />
+          <span className="text-sm text-muted-foreground">Average Time</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-green-500" />
+          <span className="text-sm text-muted-foreground">Target Time</span>
+        </div>
+      </div>
     );
   };
 
@@ -104,40 +97,38 @@ export const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({ data }) =>
       
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-          <XAxis 
-            dataKey="urgency" 
-            stroke="hsl(var(--muted-foreground))"
-            fontSize={12}
-          />
-          <YAxis 
-            stroke="hsl(var(--muted-foreground))"
-            fontSize={12}
-            label={{ value: 'Minutes', angle: -90, position: 'insideLeft' }}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          
-          {/* Target reference lines */}
-          {data.map((item, index) => (
-            <ReferenceLine 
-              key={index}
-              y={item.target} 
-              stroke="#6b7280" 
-              strokeDasharray="4 4"
-              strokeWidth={1}
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis 
+              dataKey="urgency" 
+              stroke="hsl(var(--muted-foreground))"
+              fontSize={12}
             />
-          ))}
-          
-          <Bar 
-            dataKey="avgTime" 
-            radius={[4, 4, 0, 0]}
-            shape={<CustomBar />}
-          >
-            <LabelList content={<CustomLabel />} />
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+            <YAxis 
+              stroke="hsl(var(--muted-foreground))"
+              fontSize={12}
+              label={{ value: 'Minutes', angle: -90, position: 'insideLeft' }}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend content={<CustomLegend />} />
+            
+            {/* Average Time Bars */}
+            <Bar 
+              dataKey="avgTime" 
+              fill="#3b82f6"
+              radius={[4, 4, 0, 0]}
+              name="Average Time"
+            />
+            
+            {/* Target Time Bars */}
+            <Bar 
+              dataKey="target" 
+              fill="#10b981"
+              radius={[4, 4, 0, 0]}
+              name="Target Time"
+            />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Performance Summary */}
