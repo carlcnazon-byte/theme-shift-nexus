@@ -1,7 +1,6 @@
 import React from 'react';
 import { Phone, Mail, Star, Clock, Briefcase, MoreHorizontal, Eye, Edit, UserPlus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -10,6 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { VendorStatusChip } from '@/components/ui/vendor-status-chip';
+import { ServiceCategoryChip, ServiceCategory } from '@/components/ui/service-category-chip';
 import { ServiceProvider } from '@/pages/Vendors';
 
 interface VendorCardProps {
@@ -17,24 +18,6 @@ interface VendorCardProps {
 }
 
 export const VendorCard: React.FC<VendorCardProps> = ({ vendor }) => {
-  const getServiceCategoryChip = (category: string) => {
-    const configs = {
-      'Plumbing': { className: 'bg-blue-500/20 text-blue-300', icon: '🔧' },
-      'Electrical': { className: 'bg-yellow-500/20 text-yellow-300', icon: '⚡' },
-      'HVAC': { className: 'bg-purple-500/20 text-purple-300', icon: '❄️' },
-      'General': { className: 'bg-gray-500/20 text-gray-300', icon: '🔨' },
-      'Locksmith': { className: 'bg-red-500/20 text-red-300', icon: '🔐' },
-      'Pest Control': { className: 'bg-green-500/20 text-green-300', icon: '🐛' },
-    };
-
-    const config = configs[category as keyof typeof configs] || configs['General'];
-    
-    return (
-      <Badge key={category} className={`${config.className} border-0`}>
-        {config.icon} {category === 'Pest Control' ? 'Pest' : category}
-      </Badge>
-    );
-  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -65,12 +48,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({ vendor }) => {
             </Avatar>
             <div>
               <h3 className="text-lg font-semibold text-foreground">{vendor.company_name}</h3>
-              <Badge 
-                variant={vendor.is_active ? 'default' : 'secondary'}
-                className={vendor.is_active ? 'bg-green-500/20 text-green-300' : 'bg-gray-500/20 text-gray-400'}
-              >
-                {vendor.is_active ? 'Active' : 'Inactive'}
-              </Badge>
+              <VendorStatusChip status={vendor.is_active ? 'active' : 'inactive'} />
             </div>
           </div>
           
@@ -99,7 +77,12 @@ export const VendorCard: React.FC<VendorCardProps> = ({ vendor }) => {
 
         {/* Service Categories */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {vendor.service_categories.map((category) => getServiceCategoryChip(category))}
+          {vendor.service_categories.map((category) => (
+            <ServiceCategoryChip 
+              key={category} 
+              category={category as ServiceCategory} 
+            />
+          ))}
         </div>
 
         {/* Rating */}
