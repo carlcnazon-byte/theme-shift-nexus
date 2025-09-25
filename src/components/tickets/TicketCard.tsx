@@ -23,7 +23,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
 }) => {
   return (
     <Card className={cn(
-      "bg-gray-50 shadow-sm hover:shadow-md transition-shadow duration-200 rounded-2xl border-0 relative",
+      "bg-gray-50 shadow-sm hover:shadow-md transition-all duration-200 rounded-2xl border border-transparent hover:border-primary/20 relative",
       className
     )}>
       <CardContent className="p-6">
