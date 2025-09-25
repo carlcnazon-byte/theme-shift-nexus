@@ -51,29 +51,31 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
           return (
             <div
               key={activity.id}
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent/10 transition-colors cursor-pointer"
+              className="flex gap-4 p-3 rounded-lg hover:bg-accent/10 transition-colors cursor-pointer"
             >
-              <div className="flex-shrink-0">
+              <div className="w-[100px] flex-shrink-0">
                 <Badge 
-                  className={`${statusConfig.className} border-0 font-medium text-xs px-3 py-1.5 min-w-[90px] justify-center`}
+                  className={`${statusConfig.className} border-0 font-medium text-xs px-3 py-1.5 w-full justify-center`}
                 >
                   <span className="mr-1.5">{statusConfig.icon}</span>
                   {statusConfig.label}
                 </Badge>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-sm font-semibold text-foreground">
-                    Ticket #{activity.ticketId}
-                  </p>
-                  <time className="text-xs text-muted-foreground whitespace-nowrap">
+              <div className="flex-1 min-w-0 flex flex-col">
+                <div className="flex items-start justify-between mb-1">
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-foreground leading-tight">
+                      Ticket #{activity.ticketId}
+                    </p>
+                  </div>
+                  <time className="text-xs text-muted-foreground whitespace-nowrap ml-3">
                     {activity.timestamp}
                   </time>
                 </div>
-                <p className="text-sm text-muted-foreground mb-1">
+                <p className="text-sm text-muted-foreground mb-1 leading-tight">
                   {activity.property}
                 </p>
-                <p className="text-sm text-foreground">
+                <p className="text-sm text-foreground leading-tight">
                   {activity.description}
                 </p>
               </div>
