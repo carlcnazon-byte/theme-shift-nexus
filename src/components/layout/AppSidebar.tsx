@@ -7,6 +7,7 @@ import {
   Phone,
   TrendingUp,
   Settings,
+  Building,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -25,6 +26,11 @@ const navigationItems = [
     title: 'Dashboard',
     url: '/',
     icon: BarChart3,
+  },
+  {
+    title: 'Properties',
+    url: '/properties',
+    icon: Building,
   },
   {
     title: 'Tickets',
