@@ -100,7 +100,7 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
       {/* Full Screen Overlay - covers everything including global header with maximum z-index */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-[9999] transition-opacity duration-300"
+          className="fixed inset-0 bg-black/30 z-[999999] transition-opacity duration-300"
           onClick={onClose}
         />
       )}
@@ -108,7 +108,7 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
       {/* Drawer - slides from right with maximum z-index, fixed width */}
       <div
         className={`
-          fixed top-0 right-0 h-full bg-background border-l shadow-2xl z-[10000]
+          fixed top-0 right-0 h-full bg-background border-l shadow-2xl z-[9999999]
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
           w-[440px]
