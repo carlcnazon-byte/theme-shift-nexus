@@ -26,10 +26,13 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
         {activities.map((activity) => (
           <div
             key={activity.id}
-            className="flex gap-4 p-3 rounded-lg hover:bg-accent/10 transition-colors cursor-pointer"
+            className="flex flex-col sm:flex-row gap-2 sm:gap-4 p-3 rounded-lg hover:bg-accent/10 transition-colors cursor-pointer"
           >
-            <div className="w-[100px] flex-shrink-0">
+            <div className="flex items-center justify-between sm:block sm:w-[100px] sm:flex-shrink-0">
               <UrgencyChip urgency={activity.urgency} />
+              <time className="text-xs text-muted-foreground sm:hidden">
+                {activity.timestamp}
+              </time>
             </div>
             <div className="flex-1 min-w-0 flex flex-col">
               <div className="flex items-start justify-between mb-1">
@@ -38,14 +41,14 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
                     Ticket #{activity.ticketId}
                   </p>
                 </div>
-                <time className="text-xs text-muted-foreground whitespace-nowrap ml-3">
+                <time className="hidden sm:block text-xs text-muted-foreground whitespace-nowrap ml-3">
                   {activity.timestamp}
                 </time>
               </div>
-              <p className="text-sm text-muted-foreground mb-1 leading-tight">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-1 leading-tight">
                 {activity.property}
               </p>
-              <p className="text-sm text-foreground leading-tight">
+              <p className="text-xs sm:text-sm text-foreground leading-tight">
                 {activity.description}
               </p>
             </div>

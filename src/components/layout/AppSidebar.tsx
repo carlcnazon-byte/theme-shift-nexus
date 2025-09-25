@@ -74,6 +74,7 @@ export const AppSidebar: React.FC = () => {
         bg-sidebar/90 backdrop-blur-sm
       `}
       collapsible="icon"
+      variant="sidebar"
     >
       <SidebarContent className="p-0">
         <SidebarGroup className="pt-4">

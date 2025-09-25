@@ -107,19 +107,19 @@ const Index = () => {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">
+      <div className="space-y-1 sm:space-y-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
           Property Management Dashboard
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           Monitor tickets, track performance, and manage your properties efficiently.
         </p>
       </div>
 
-      {/* KPI Cards - 4 Column Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* KPI Cards - Responsive Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         {kpiData.map((kpi, index) => (
           <KPICard key={index} {...kpi} />
         ))}
@@ -129,7 +129,7 @@ const Index = () => {
       <MiniChart data={chartData} />
 
       {/* Main Content - Activity Feed + Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {/* Activity Feed - 2/3 width */}
         <div className="lg:col-span-2">
           <ActivityFeed activities={recentActivities} />
