@@ -189,43 +189,43 @@ const Reports = () => {
       </div>
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 overflow-hidden">
         {/* Ticket Volume Trends */}
-        <Card className="bg-card border-border">
+        <Card className="bg-card border-border min-w-0">
           <CardHeader>
             <CardTitle className="text-foreground">Ticket Volume Trends</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-w-0">
             <TicketVolumeChart data={filteredData.ticketTrends} />
           </CardContent>
         </Card>
 
         {/* Response Time Performance */}
-        <Card className="bg-card border-border">
+        <Card className="bg-card border-border min-w-0">
           <CardHeader>
             <CardTitle className="text-foreground">Response Time Performance</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-w-0">
             <ResponseTimeChart data={filteredData.responseMetrics} />
           </CardContent>
         </Card>
 
         {/* Vendor Performance */}
-        <Card className="bg-card border-border">
+        <Card className="bg-card border-border min-w-0">
           <CardHeader>
             <CardTitle className="text-foreground">Top Vendor Performance</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-w-0">
             <VendorPerformanceChart data={filteredData.vendorPerformance.slice(0, 10)} />
           </CardContent>
         </Card>
 
         {/* Property Distribution */}
-        <Card className="bg-card border-border">
+        <Card className="bg-card border-border min-w-0">
           <CardHeader>
             <CardTitle className="text-foreground">Ticket Distribution by Property</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-w-0">
             <PropertyDistributionChart data={filteredData.propertyDistribution} />
           </CardContent>
         </Card>

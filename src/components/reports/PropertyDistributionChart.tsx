@@ -120,10 +120,10 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
         ))}
       </div>
       
-      <div className="flex flex-col lg:flex-row gap-6 items-stretch min-h-[320px]">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-stretch min-h-[320px] overflow-hidden">
         {/* Pie Chart */}
-        <div className="w-full lg:w-1/2 flex">
-          <div className="flex-1">
+        <div className="w-full lg:flex-1 flex min-w-0">
+          <div className="flex-1 min-w-0">
             <ResponsiveContainer width="100%" height={320}>
               <PieChart>
                 <Pie
@@ -174,28 +174,28 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
         </div>
         
         {/* Properties List */}
-        <div className="w-full lg:w-1/2 flex">
-          <div className="flex-1 bg-gray-50 dark:bg-gray-900/50 rounded-lg border shadow-sm p-4 flex flex-col">
+        <div className="w-full lg:flex-1 flex min-w-0">
+          <div className="flex-1 bg-muted/30 rounded-lg border shadow-sm p-4 flex flex-col min-w-0">
             <div className="mb-6">
               <h4 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
                 <span>List Properties</span>
                 <div className="flex-1 h-px bg-border" />
               </h4>
             </div>
-            <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+            <div className="flex-1 overflow-y-auto space-y-2 pr-1">
               {data.map((item, index) => {
                 const rank = sortedData.findIndex(d => d.property === item.property) + 1;
                 
                 return (
-                  <div key={index} className="bg-background rounded-lg py-4 px-4 border hover:shadow-sm transition-all duration-200">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 min-w-0 flex-1">
+                  <div key={index} className="bg-background rounded-lg py-3 px-3 border hover:shadow-sm transition-all duration-200 min-w-0">
+                    <div className="flex items-center justify-between min-w-0">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div 
-                          className="w-4 h-4 rounded-full flex-shrink-0" 
+                          className="w-3 h-3 rounded-full flex-shrink-0" 
                           style={{ backgroundColor: COLORS[index % COLORS.length] }}
                         />
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm font-medium text-foreground truncate pr-2">
+                          <div className="text-sm font-medium text-foreground truncate">
                             {item.property}
                           </div>
                           {rank <= 3 && (
@@ -205,8 +205,8 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
                           )}
                         </div>
                       </div>
-                      <div className="text-right flex-shrink-0 ml-4">
-                        <div className="text-base font-bold text-foreground">
+                      <div className="text-right flex-shrink-0 ml-3">
+                        <div className="text-sm font-bold text-foreground">
                           {item.count}
                         </div>
                         <div className="text-xs text-muted-foreground">

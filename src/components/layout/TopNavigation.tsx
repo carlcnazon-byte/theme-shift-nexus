@@ -15,16 +15,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export const TopNavigation: React.FC = () => {
   return (
-    <header className="h-16 flex items-center justify-between px-6 border-b border-border bg-background/95 backdrop-blur-sm sticky top-0 z-50">
+    <header className="h-16 flex items-center justify-between px-3 sm:px-4 lg:px-6 border-b border-border bg-background/95 backdrop-blur-sm sticky top-0 z-50">
       {/* Left Section */}
-      <div className="flex items-center gap-4">
-        <SidebarTrigger className="h-8 w-8" />
+      <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1 sm:flex-initial">
+        <SidebarTrigger className="h-8 w-8 flex-shrink-0" />
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-2 text-foreground hover:bg-accent hover:text-accent-foreground">
-              <span className="font-semibold text-lg">Demo PM Co</span>
-              <ChevronDown className="h-4 w-4" />
+            <Button variant="ghost" className="flex items-center gap-1 sm:gap-2 text-foreground hover:bg-accent hover:text-accent-foreground min-w-0 px-2 sm:px-4">
+              <span className="font-semibold text-base sm:text-lg truncate">Demo PM Co</span>
+              <ChevronDown className="h-4 w-4 flex-shrink-0" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-48 bg-popover border border-border">
@@ -38,9 +38,9 @@ export const TopNavigation: React.FC = () => {
         </DropdownMenu>
       </div>
 
-      {/* Center Section - Search */}
-      <div className="flex-1 max-w-md mx-8">
-        <div className="relative">
+      {/* Center Section - Search (Hidden on mobile) */}
+      <div className="hidden md:flex flex-1 max-w-md mx-4 lg:mx-8">
+        <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
@@ -51,12 +51,17 @@ export const TopNavigation: React.FC = () => {
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 flex-shrink-0">
+        {/* Mobile Search Button */}
+        <Button variant="ghost" size="sm" className="md:hidden h-8 w-8 p-0">
+          <Search className="h-4 w-4" />
+        </Button>
+        
         <ThemeToggle />
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="hidden sm:flex items-center gap-2">
               <span className="text-sm">EN</span>
               <ChevronDown className="h-3 w-3" />
             </Button>
@@ -73,14 +78,14 @@ export const TopNavigation: React.FC = () => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="flex items-center gap-2 px-2">
-              <Avatar className="h-8 w-8">
+            <Button variant="ghost" size="sm" className="flex items-center gap-1 sm:gap-2 px-1 sm:px-2">
+              <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
                 <AvatarImage src="/placeholder-avatar.jpg" alt="User Avatar" />
                 <AvatarFallback className="bg-primary/10 text-primary">
-                  <User className="h-4 w-4" />
+                  <User className="h-3 w-3 sm:h-4 sm:w-4" />
                 </AvatarFallback>
               </Avatar>
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="h-3 w-3 hidden sm:block" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48 bg-popover border border-border">

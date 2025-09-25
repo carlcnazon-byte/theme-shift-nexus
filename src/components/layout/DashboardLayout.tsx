@@ -14,8 +14,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         <AppSidebar />
         <div className="flex-1 flex flex-col">
           <TopNavigation />
-          <main className="flex-1 p-6 overflow-auto">
-            {children}
+          <main className="flex-1 p-3 sm:p-4 lg:p-6 overflow-auto">
+            <div className="max-w-full mx-auto">
+              {children}
+            </div>
           </main>
         </div>
       </div>
