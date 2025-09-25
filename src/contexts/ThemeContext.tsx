@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'dark' | 'light';
+type Theme = 'dark' | 'light' | 'system';
 
 interface ThemeContextType {
   theme: Theme;
@@ -28,8 +28,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     if (theme === 'dark') {
       root.classList.add('dark');
-    } else {
+    } else if (theme === 'light') {
       root.classList.remove('dark');
+    } else if (theme === 'system') {
+      // Use system preference
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (systemPrefersDark) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
     }
 
     // Save to localStorage
@@ -37,7 +45,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [theme]);
 
   const toggleTheme = () => {
-    setThemeState(prev => prev === 'dark' ? 'light' : 'dark');
+    setThemeState(prev => prev === 'dark' ? 'light' : prev === 'light' ? 'system' : 'dark');
   };
 
   const setTheme = (newTheme: Theme) => {
