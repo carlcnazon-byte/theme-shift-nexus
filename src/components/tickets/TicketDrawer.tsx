@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { X, Clock, User, MapPin, FileText, MessageSquare, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UrgencyChip } from '@/components/ui/urgency-chip';
+import { StatusChip } from '@/components/ui/status-chip';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,58 +30,6 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
   }, [isOpen, onClose]);
 
   if (!ticket) return null;
-
-  const getUrgencyChip = (urgency: Ticket['urgency']) => {
-    switch (urgency) {
-      case 'emergency':
-        return (
-          <Badge className="bg-red-500 hover:bg-red-600 text-white">
-            🚨 Emergency
-          </Badge>
-        );
-      case 'urgent':
-        return (
-          <Badge className="bg-amber-500 hover:bg-amber-600 text-white">
-            ⚡ Urgent
-          </Badge>
-        );
-      case 'standard':
-        return (
-          <Badge className="bg-slate-500 hover:bg-slate-600 text-white">
-            Standard
-          </Badge>
-        );
-    }
-  };
-
-  const getStatusChip = (status: Ticket['status']) => {
-    switch (status) {
-      case 'open':
-        return (
-          <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300">
-            Open
-          </Badge>
-        );
-      case 'vendor_notified':
-        return (
-          <Badge variant="secondary" className="bg-cyan-100 text-cyan-800 dark:bg-cyan-500/20 dark:text-cyan-300">
-            Vendor Notified
-          </Badge>
-        );
-      case 'in_progress':
-        return (
-          <Badge variant="secondary" className="bg-cyan-100 text-cyan-800 dark:bg-cyan-500/20 dark:text-cyan-300">
-            In Progress
-          </Badge>
-        );
-      case 'resolved':
-        return (
-          <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300">
-            Resolved
-          </Badge>
-        );
-    }
-  };
 
   const mockCommunicationHistory = [
     {
@@ -147,8 +96,8 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
             <div className="p-6 space-y-6">
               {/* Status and Urgency */}
               <div className="flex flex-wrap gap-3">
-                {getUrgencyChip(ticket.urgency)}
-                {getStatusChip(ticket.status)}
+                <UrgencyChip urgency={ticket.urgency} />
+                <StatusChip status={ticket.status} />
               </div>
 
               {/* Property Information */}
