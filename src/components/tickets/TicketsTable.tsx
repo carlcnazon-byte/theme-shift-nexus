@@ -10,8 +10,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UrgencyChip } from '@/components/ui/urgency-chip';
+import { StatusChip } from '@/components/ui/status-chip';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,58 +56,6 @@ export const TicketsTable: React.FC<TicketsTableProps> = ({ tickets, onTicketSel
     if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
     return 0;
   });
-
-  const getUrgencyChip = (urgency: Ticket['urgency']) => {
-    switch (urgency) {
-      case 'emergency':
-        return (
-          <Badge className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-24 justify-center">
-            🚨 Emergency
-          </Badge>
-        );
-      case 'urgent':
-        return (
-          <Badge className="bg-warning text-white hover:bg-warning/90 w-24 justify-center">
-            ⚡ Urgent
-          </Badge>
-        );
-      case 'standard':
-        return (
-          <Badge className="bg-muted text-muted-foreground hover:bg-muted/80 w-24 justify-center">
-            Standard
-          </Badge>
-        );
-    }
-  };
-
-  const getStatusChip = (status: Ticket['status']) => {
-    switch (status) {
-      case 'open':
-        return (
-          <Badge className="bg-warning/20 text-warning border-0 w-32 justify-center">
-            Open
-          </Badge>
-        );
-      case 'vendor_notified':
-        return (
-          <Badge className="bg-info/20 text-info border-0 w-32 justify-center">
-            Vendor Notified
-          </Badge>
-        );
-      case 'in_progress':
-        return (
-          <Badge className="bg-primary/20 text-primary border-0 w-32 justify-center">
-            In Progress
-          </Badge>
-        );
-      case 'resolved':
-        return (
-          <Badge className="bg-success/20 text-success border-0 w-32 justify-center">
-            Resolved
-          </Badge>
-        );
-    }
-  };
 
   const SortableHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
     <Button
@@ -204,12 +153,12 @@ export const TicketsTable: React.FC<TicketsTableProps> = ({ tickets, onTicketSel
               </TableCell>
               <TableCell className="text-center">
                 <div className="flex justify-center">
-                  {getUrgencyChip(ticket.urgency)}
+                  <UrgencyChip urgency={ticket.urgency} />
                 </div>
               </TableCell>
               <TableCell className="text-center">
                 <div className="flex justify-center">
-                  {getStatusChip(ticket.status)}
+                  <StatusChip status={ticket.status} />
                 </div>
               </TableCell>
               <TableCell>
