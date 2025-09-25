@@ -120,11 +120,11 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
         ))}
       </div>
       
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6 items-stretch min-h-[320px]">
         {/* Pie Chart */}
-        <div className="w-full lg:w-1/2">
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
+        <div className="w-full lg:w-1/2 flex">
+          <div className="flex-1">
+            <ResponsiveContainer width="100%" height={320}>
               <PieChart>
                 <Pie
                   data={data}
@@ -174,12 +174,50 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
         </div>
         
         {/* Properties List */}
-        <div className="w-full lg:w-1/2">
-          <div className="h-80 overflow-y-auto pr-2">
-            <CustomLegend payload={data.map((item, index) => ({
-              value: item.property,
-              color: COLORS[index % COLORS.length]
-            }))} />
+        <div className="w-full lg:w-1/2 flex">
+          <div className="flex-1 bg-gray-50 dark:bg-gray-900/50 rounded-lg border shadow-sm p-4 flex flex-col">
+            <div className="mb-6">
+              <h4 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                <span>List Properties</span>
+                <div className="flex-1 h-px bg-border" />
+              </h4>
+            </div>
+            <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+              {data.map((item, index) => {
+                const rank = sortedData.findIndex(d => d.property === item.property) + 1;
+                
+                return (
+                  <div key={index} className="bg-background rounded-lg py-4 px-4 border hover:shadow-sm transition-all duration-200">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 min-w-0 flex-1">
+                        <div 
+                          className="w-4 h-4 rounded-full flex-shrink-0" 
+                          style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-medium text-foreground truncate pr-2">
+                            {item.property}
+                          </div>
+                          {rank <= 3 && (
+                            <Badge variant="secondary" className="text-xs mt-1">
+                              #{rank}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0 ml-4">
+                        <div className="text-base font-bold text-foreground">
+                          {item.count}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {item.percentage}%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
