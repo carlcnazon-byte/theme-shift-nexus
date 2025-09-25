@@ -44,7 +44,7 @@ const Index = () => {
       timestamp: '2 min ago',
       ticketId: 'TK-2024-001',
       property: '123 Oak Street, Apt 4B',
-      status: 'emergency' as const,
+      urgency: 'emergency' as const,
       description: 'Water leak reported - maintenance dispatched'
     },
     {
@@ -52,7 +52,7 @@ const Index = () => {
       timestamp: '15 min ago',
       ticketId: 'TK-2024-002',
       property: '456 River Road, Unit 12',
-      status: 'urgent' as const,
+      urgency: 'urgent' as const,
       description: 'HVAC system malfunction - vendor assigned'
     },
     {
@@ -60,7 +60,7 @@ const Index = () => {
       timestamp: '1 hour ago',
       ticketId: 'TK-2024-003',
       property: '789 Park Avenue',
-      status: 'standard' as const,
+      urgency: 'standard' as const,
       description: 'Routine maintenance completed'
     },
     {
@@ -68,7 +68,7 @@ const Index = () => {
       timestamp: '2 hours ago',
       ticketId: 'TK-2024-004',
       property: '321 Industrial Blvd',
-      status: 'urgent' as const,
+      urgency: 'urgent' as const,
       description: 'Electrical issue reported'
     },
     {
@@ -76,7 +76,7 @@ const Index = () => {
       timestamp: '3 hours ago',
       ticketId: 'TK-2024-005',
       property: '654 Metro Plaza',
-      status: 'standard' as const,
+      urgency: 'standard' as const,
       description: 'Painting work scheduled'
     }
   ];
