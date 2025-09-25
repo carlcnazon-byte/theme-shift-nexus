@@ -13,9 +13,10 @@ import { TranscriptViewer } from '@/components/calls/TranscriptViewer';
 
 interface CallDetailsProps {
   call: Call;
+  onCreateTicket?: () => void;
 }
 
-export const CallDetails: React.FC<CallDetailsProps> = ({ call }) => {
+export const CallDetails: React.FC<CallDetailsProps> = ({ call, onCreateTicket }) => {
   const [transcriptSearch, setTranscriptSearch] = useState('');
 
   const getDirectionIcon = () => {
@@ -82,7 +83,7 @@ export const CallDetails: React.FC<CallDetailsProps> = ({ call }) => {
               )}
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={onCreateTicket}>
                 <ClipboardList className="h-4 w-4 mr-2" />
                 Create Ticket
               </Button>

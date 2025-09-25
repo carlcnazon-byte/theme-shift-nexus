@@ -249,23 +249,13 @@ Caller: Perfect, I'll be waiting for your call.`,
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Calls & Communications
-          </h1>
-          <p className="text-muted-foreground">
-            Review call transcripts and manage communications history.
-          </p>
-        </div>
-        
-        <Button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          Create Ticket
-        </Button>
+      <div>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Calls & Communications
+        </h1>
+        <p className="text-muted-foreground">
+          Review call transcripts and manage communications history.
+        </p>
       </div>
 
       {/* Filter Bar */}
@@ -289,7 +279,10 @@ Caller: Perfect, I'll be waiting for your call.`,
         {/* Call Details - 60% width on desktop */}
         <div className="lg:col-span-3">
           {selectedCall ? (
-            <CallDetails call={selectedCall} />
+            <CallDetails 
+              call={selectedCall} 
+              onCreateTicket={() => setIsCreateModalOpen(true)} 
+            />
           ) : (
             <div className="flex items-center justify-center h-96 bg-card border border-border rounded-lg">
               <div className="text-center">
