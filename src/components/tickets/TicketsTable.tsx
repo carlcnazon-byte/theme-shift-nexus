@@ -60,19 +60,19 @@ export const TicketsTable: React.FC<TicketsTableProps> = ({ tickets, onTicketSel
     switch (urgency) {
       case 'emergency':
         return (
-          <Badge className="bg-red-500 hover:bg-red-600 text-white">
+          <Badge className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-24 justify-center">
             🚨 Emergency
           </Badge>
         );
       case 'urgent':
         return (
-          <Badge className="bg-amber-500 hover:bg-amber-600 text-white">
+          <Badge className="bg-warning text-white hover:bg-warning/90 w-24 justify-center">
             ⚡ Urgent
           </Badge>
         );
       case 'standard':
         return (
-          <Badge className="bg-slate-500 hover:bg-slate-600 text-white">
+          <Badge className="bg-muted text-muted-foreground hover:bg-muted/80 w-24 justify-center">
             Standard
           </Badge>
         );
@@ -83,25 +83,25 @@ export const TicketsTable: React.FC<TicketsTableProps> = ({ tickets, onTicketSel
     switch (status) {
       case 'open':
         return (
-          <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300">
+          <Badge className="bg-warning/20 text-warning border-0 w-32 justify-center">
             Open
           </Badge>
         );
       case 'vendor_notified':
         return (
-          <Badge variant="secondary" className="bg-cyan-100 text-cyan-800 dark:bg-cyan-500/20 dark:text-cyan-300">
+          <Badge className="bg-info/20 text-info border-0 w-32 justify-center">
             Vendor Notified
           </Badge>
         );
       case 'in_progress':
         return (
-          <Badge variant="secondary" className="bg-cyan-100 text-cyan-800 dark:bg-cyan-500/20 dark:text-cyan-300">
+          <Badge className="bg-primary/20 text-primary border-0 w-32 justify-center">
             In Progress
           </Badge>
         );
       case 'resolved':
         return (
-          <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300">
+          <Badge className="bg-success/20 text-success border-0 w-32 justify-center">
             Resolved
           </Badge>
         );
@@ -202,8 +202,16 @@ export const TicketsTable: React.FC<TicketsTableProps> = ({ tickets, onTicketSel
                   </TooltipContent>
                 </Tooltip>
               </TableCell>
-              <TableCell>{getUrgencyChip(ticket.urgency)}</TableCell>
-              <TableCell>{getStatusChip(ticket.status)}</TableCell>
+              <TableCell className="text-center">
+                <div className="flex justify-center">
+                  {getUrgencyChip(ticket.urgency)}
+                </div>
+              </TableCell>
+              <TableCell className="text-center">
+                <div className="flex justify-center">
+                  {getStatusChip(ticket.status)}
+                </div>
+              </TableCell>
               <TableCell>
                 {ticket.service_provider ? (
                   <div className="flex items-center gap-3">
