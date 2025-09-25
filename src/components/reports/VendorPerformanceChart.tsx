@@ -1,5 +1,6 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
+import { Badge } from '@/components/ui/badge';
 
 interface VendorPerformanceData {
   vendor: string;
@@ -25,6 +26,34 @@ export const VendorPerformanceChart: React.FC<VendorPerformanceChartProps> = ({ 
   const formatVendorName = (name: string) => {
     // Truncate long vendor names for display
     return name.length > 20 ? `${name.substring(0, 18)}...` : name;
+  };
+
+  const formatVendorWithRating = (vendor: string) => {
+    const vendorData = sortedData.find(d => d.vendor === vendor);
+    if (!vendorData) return vendor;
+    
+    const performanceLevel = vendorData.rating >= 4.7 ? 'Excellent' : 
+                           vendorData.rating >= 4.3 ? 'Good' : 
+                           vendorData.rating >= 4.0 ? 'Average' : 'Poor';
+    
+    return `${formatVendorName(vendor)} (${vendorData.rating}/5 - ${performanceLevel})`;
+  };
+
+  const CustomLabel = (props: any) => {
+    const { x, y, width, height, value } = props;
+    return (
+      <text 
+        x={x + width + 5} 
+        y={y + height / 2} 
+        fill="hsl(var(--foreground))" 
+        textAnchor="start" 
+        dominantBaseline="middle"
+        fontSize={12}
+        fontWeight="medium"
+      >
+        {`${value} jobs`}
+      </text>
+    );
   };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -82,9 +111,9 @@ export const VendorPerformanceChart: React.FC<VendorPerformanceChartProps> = ({ 
             type="category"
             dataKey="vendor"
             stroke="hsl(var(--muted-foreground))"
-            fontSize={11}
-            tickFormatter={formatVendorName}
-            width={75}
+            fontSize={10}
+            tickFormatter={formatVendorWithRating}
+            width={150}
           />
           <Tooltip content={<CustomTooltip />} />
           
@@ -95,9 +124,17 @@ export const VendorPerformanceChart: React.FC<VendorPerformanceChartProps> = ({ 
             {sortedData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={getBarColor(entry.rating)} />
             ))}
+            <LabelList content={<CustomLabel />} />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+      
+      {/* Top Performer Badge */}
+      <div className="flex justify-center mb-2">
+        <Badge variant="default" className="text-sm">
+          🏆 Top Performer: {sortedData[0]?.vendor} ({sortedData[0]?.jobs} jobs, {sortedData[0]?.rating}/5)
+        </Badge>
+      </div>
       
       {/* Legend */}
       <div className="flex items-center justify-center gap-4 mt-4 text-xs">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { Badge } from '@/components/ui/badge';
 
 interface PropertyDistributionData {
   property: string;
@@ -24,6 +25,9 @@ const COLORS = [
 
 export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps> = ({ data }) => {
   const totalTickets = data.reduce((sum, item) => sum + item.count, 0);
+  
+  // Sort data by count for ranking
+  const sortedData = [...data].sort((a, b) => b.count - a.count);
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -54,6 +58,7 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
     const percentage = data[index]?.percentage;
+    const count = data[index]?.count;
 
     // Only show label if percentage is greater than 5%
     if (percentage && percentage > 5) {
@@ -64,10 +69,10 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
           fill="white" 
           textAnchor={x > cx ? 'start' : 'end'} 
           dominantBaseline="central"
-          fontSize={12}
+          fontSize={11}
           fontWeight="medium"
         >
-          {`${percentage}%`}
+          {`${percentage}% (${count})`}
         </text>
       );
     }
@@ -76,25 +81,52 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
 
   const CustomLegend = ({ payload }: any) => {
     return (
-      <div className="flex flex-wrap justify-center gap-2 mt-4">
-        {payload?.map((entry: any, index: number) => (
-          <div key={index} className="flex items-center gap-2 text-xs">
-            <div 
-              className="w-3 h-3 rounded-full" 
-              style={{ backgroundColor: entry.color }}
-            />
-            <span className="text-muted-foreground">
-              {entry.value.length > 15 ? `${entry.value.substring(0, 13)}...` : entry.value}
-            </span>
-          </div>
-        ))}
+      <div className="space-y-2 mt-4">
+        <div className="flex flex-wrap justify-center gap-2">
+          {payload?.map((entry: any, index: number) => {
+            const itemData = data.find(d => d.property === entry.value);
+            const rank = sortedData.findIndex(d => d.property === entry.value) + 1;
+            
+            return (
+              <div key={index} className="flex items-center gap-2 text-xs">
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: entry.color }}
+                />
+                <span className="text-muted-foreground">
+                  {rank <= 3 && (
+                    <Badge variant="secondary" className="text-xs mr-1 px-1 py-0">
+                      #{rank}
+                    </Badge>
+                  )}
+                  {entry.value.length > 12 ? `${entry.value.substring(0, 10)}...` : entry.value}
+                  {itemData && ` (${itemData.count})`}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="h-80">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="space-y-4">
+      {/* Top 3 Properties */}
+      <div className="flex justify-center gap-2">
+        {sortedData.slice(0, 3).map((item, index) => (
+          <Badge 
+            key={index} 
+            variant={index === 0 ? "default" : "secondary"} 
+            className="text-xs"
+          >
+            #{index + 1} {item.property}: {item.count} tickets ({item.percentage}%)
+          </Badge>
+        ))}
+      </div>
+      
+      <div className="h-80">
+        <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={data}
@@ -141,6 +173,7 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
           </text>
         </PieChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 };

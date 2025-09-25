@@ -1,5 +1,6 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts';
+import { Badge } from '@/components/ui/badge';
 
 interface ResponseTimeData {
   urgency: string;
@@ -61,9 +62,48 @@ export const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({ data }) =>
     return <Bar {...rest} fill={color} />;
   };
 
+  const CustomLabel = (props: any) => {
+    const { x, y, width, value } = props;
+    return (
+      <text 
+        x={x + width / 2} 
+        y={y - 5} 
+        fill="hsl(var(--foreground))" 
+        textAnchor="middle" 
+        fontSize={12}
+        fontWeight="medium"
+      >
+        {`${value} min`}
+      </text>
+    );
+  };
+
+  const getStatusBadge = (avgTime: number, target: number) => {
+    const ratio = avgTime / target;
+    if (ratio <= 0.7) return { label: 'Excellent', variant: 'default' as const };
+    if (ratio <= 1.0) return { label: 'On Target', variant: 'secondary' as const };
+    return { label: 'Needs Improvement', variant: 'destructive' as const };
+  };
+
   return (
-    <div className="h-80">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="space-y-4">
+      {/* Status Badges */}
+      <div className="flex flex-wrap gap-2 justify-center">
+        {data.map((item, index) => {
+          const status = getStatusBadge(item.avgTime, item.target);
+          return (
+            <div key={index} className="text-center">
+              <div className="text-xs text-muted-foreground mb-1">{item.urgency}</div>
+              <Badge variant={status.variant} className="text-xs">
+                {status.label}
+              </Badge>
+            </div>
+          );
+        })}
+      </div>
+      
+      <div className="h-80">
+        <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
           <XAxis 
@@ -93,9 +133,26 @@ export const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({ data }) =>
             dataKey="avgTime" 
             radius={[4, 4, 0, 0]}
             shape={<CustomBar />}
-          />
+          >
+            <LabelList content={<CustomLabel />} />
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
+      </div>
+
+      {/* Performance Summary */}
+      <div className="bg-muted/50 rounded-lg p-3">
+        <div className="grid grid-cols-3 gap-4 text-center">
+          {data.map((item, index) => (
+            <div key={index} className="text-sm">
+              <div className="text-muted-foreground">{item.urgency}</div>
+              <div className="font-medium text-foreground">
+                {item.avgTime}min / {item.target}min target
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
