@@ -21,7 +21,7 @@ interface TicketDrawerProps {
 export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onClose }) => {
   const [editableTicket, setEditableTicket] = useState(ticket);
 
-  // Handle ESC key press
+  // Handle ESC key press and body scroll lock
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isOpen) {
@@ -29,8 +29,19 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      // Disable body scroll when drawer is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Re-enable body scroll when drawer is closed
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen, onClose]);
 
   // Update editable ticket when ticket prop changes
@@ -86,21 +97,21 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
 
   return (
     <>
-      {/* Full Screen Overlay - covers everything including global header */}
+      {/* Full Screen Overlay - covers everything including global header with maximum z-index */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-[100] transition-opacity duration-300"
+          className="fixed inset-0 bg-black/30 z-[9999] transition-opacity duration-300"
           onClick={onClose}
         />
       )}
 
-      {/* Drawer - slides from right with maximum z-index */}
+      {/* Drawer - slides from right with maximum z-index, fixed width */}
       <div
         className={`
-          fixed top-0 right-0 h-full bg-background border-l shadow-2xl z-[101]
+          fixed top-0 right-0 h-full bg-background border-l shadow-2xl z-[10000]
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-          w-full sm:w-[480px] lg:w-[560px]
+          w-[440px]
         `}
       >
         <div className="flex flex-col h-full">
@@ -145,7 +156,7 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
                   <SelectTrigger className="w-full h-10 bg-background border-input shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="z-[102]">
+                  <SelectContent className="z-[10001]">
                     <SelectItem value="emergency">Emergency</SelectItem>
                     <SelectItem value="urgent">Urgent</SelectItem>
                     <SelectItem value="standard">Standard</SelectItem>
@@ -160,7 +171,7 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
                   <SelectTrigger className="w-full h-10 bg-background border-input shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="z-[102]">
+                  <SelectContent className="z-[10001]">
                     <SelectItem value="open">Open</SelectItem>
                     <SelectItem value="vendor_notified">Vendor Notified</SelectItem>
                     <SelectItem value="in_progress">In Progress</SelectItem>
@@ -226,7 +237,7 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
                     <SelectTrigger className="w-full h-10 shadow-sm">
                       <SelectValue placeholder="Select vendor..." />
                     </SelectTrigger>
-                    <SelectContent className="z-[102]">
+                    <SelectContent className="z-[10001]">
                       {mockVendors.map((vendor) => (
                         <SelectItem key={vendor} value={vendor}>
                           {vendor}
