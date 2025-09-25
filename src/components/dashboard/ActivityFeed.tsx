@@ -28,7 +28,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
             key={activity.id}
             className="flex gap-4 p-3 rounded-lg hover:bg-accent/10 transition-colors cursor-pointer"
           >
-            <div className="flex-shrink-0">
+            <div className="w-[100px] flex-shrink-0">
               <UrgencyChip urgency={activity.urgency} />
             </div>
             <div className="flex-1 min-w-0 flex flex-col">
