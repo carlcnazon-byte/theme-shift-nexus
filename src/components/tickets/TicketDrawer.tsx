@@ -86,38 +86,40 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
 
   return (
     <>
-      {/* Backdrop - Solid overlay */}
+      {/* Full Screen Overlay - covers everything including global header */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-40 transition-opacity duration-300"
+          className="fixed inset-0 bg-black/30 z-[100] transition-opacity duration-300"
           onClick={onClose}
         />
       )}
 
-      {/* Drawer */}
+      {/* Drawer - slides from right with maximum z-index */}
       <div
         className={`
-          fixed top-0 right-0 h-full bg-background border-l shadow-2xl z-50
+          fixed top-0 right-0 h-full bg-background border-l shadow-2xl z-[101]
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
           w-full sm:w-[480px] lg:w-[560px]
         `}
       >
         <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b">
-            <div className="flex-1">
+          {/* Drawer Header - replaces global header in focus mode */}
+          <div className="flex items-center justify-between px-6 py-5 border-b bg-background/95 backdrop-blur-sm">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3">
-                <h1 className="text-lg font-medium text-foreground">{editableTicket.ticket_id}</h1>
-                <span className="text-muted-foreground">•</span>
-                <span className="text-base text-foreground">{editableTicket.property_name}</span>
+                <h1 className="text-lg font-medium text-foreground truncate">{editableTicket.ticket_id}</h1>
+                <span className="text-muted-foreground hidden sm:inline">•</span>
+                <span className="text-base text-foreground truncate hidden sm:inline">{editableTicket.property_name}</span>
               </div>
+              {/* Mobile: Show property name below */}
+              <p className="text-sm text-muted-foreground mt-1 sm:hidden">{editableTicket.property_name}</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ml-4">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-muted/80"
               >
                 <Edit className="h-4 w-4" />
               </Button>
@@ -125,40 +127,40 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-muted/80"
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
           </div>
 
-          {/* Urgency and Status - Editable */}
-          <div className="px-6 py-4 border-b bg-muted/30">
-            <div className="flex gap-4">
-              <div className="flex-1">
+          {/* Urgency and Status - Editable dropdowns */}
+          <div className="px-6 py-4 border-b bg-muted/20">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
                   Urgency
                 </label>
                 <Select value={editableTicket.urgency} onValueChange={handleUrgencyChange}>
-                  <SelectTrigger className="w-full h-9 bg-background border-input">
+                  <SelectTrigger className="w-full h-10 bg-background border-input shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[102]">
                     <SelectItem value="emergency">Emergency</SelectItem>
                     <SelectItem value="urgent">Urgent</SelectItem>
                     <SelectItem value="standard">Standard</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex-1">
+              <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">
                   Status
                 </label>
                 <Select value={editableTicket.status} onValueChange={handleStatusChange}>
-                  <SelectTrigger className="w-full h-9 bg-background border-input">
+                  <SelectTrigger className="w-full h-10 bg-background border-input shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[102]">
                     <SelectItem value="open">Open</SelectItem>
                     <SelectItem value="vendor_notified">Vendor Notified</SelectItem>
                     <SelectItem value="in_progress">In Progress</SelectItem>
@@ -170,9 +172,9 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
             </div>
           </div>
 
-          {/* Content */}
+          {/* Main Content */}
           <ScrollArea className="flex-1">
-            <div className="p-6 space-y-5">
+            <div className="p-6 space-y-6">
 
               {/* Property Information */}
               <Card className="rounded-2xl border shadow-sm">
@@ -209,8 +211,8 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
               </Card>
 
               {/* Assigned Vendor - Editable */}
-              <Card className="rounded-2xl border shadow-sm">
-                <CardHeader className="pb-3">
+              <Card className="rounded-xl border shadow-sm">
+                <CardHeader className="pb-4">
                   <CardTitle className="text-base font-medium flex items-center gap-2 text-foreground">
                     <User className="h-4 w-4 text-muted-foreground" />
                     Assigned Vendor
@@ -221,10 +223,10 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
                     value={editableTicket.service_provider || ''} 
                     onValueChange={(value) => setEditableTicket({ ...editableTicket, service_provider: value })}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full h-10 shadow-sm">
                       <SelectValue placeholder="Select vendor..." />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[102]">
                       {mockVendors.map((vendor) => (
                         <SelectItem key={vendor} value={vendor}>
                           {vendor}
@@ -234,23 +236,25 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
                   </Select>
 
                   {editableTicket.service_provider && (
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50">
-                      <Avatar className="h-10 w-10">
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50 border">
+                      <Avatar className="h-12 w-12">
                         <AvatarImage src={`/avatar-${editableTicket.service_provider.replace(/\s+/g, '').toLowerCase()}.jpg`} />
-                        <AvatarFallback className="bg-primary/10 text-primary">
+                        <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
                           {editableTicket.service_provider.split(' ').map(n => n[0]).join('').slice(0, 2)}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <p className="font-medium text-foreground">{editableTicket.service_provider}</p>
                         <p className="text-sm text-muted-foreground">Professional Service Provider</p>
                       </div>
                       <div className="flex gap-2">
-                        <Button size="sm" variant="outline" className="h-8">
-                          <Phone className="h-3 w-3" />
+                        <Button size="sm" variant="outline" className="h-9 px-3">
+                          <Phone className="h-3 w-3 mr-2" />
+                          Call
                         </Button>
-                        <Button size="sm" variant="outline" className="h-8">
-                          <Mail className="h-3 w-3" />
+                        <Button size="sm" variant="outline" className="h-9 px-3">
+                          <Mail className="h-3 w-3 mr-2" />
+                          Email
                         </Button>
                       </div>
                     </div>
@@ -259,8 +263,8 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
               </Card>
 
               {/* Timeline */}
-              <Card className="rounded-2xl border shadow-sm">
-                <CardHeader className="pb-3">
+              <Card className="rounded-xl border shadow-sm">
+                <CardHeader className="pb-4">
                   <CardTitle className="text-base font-medium flex items-center gap-2 text-foreground">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     Timeline
@@ -268,14 +272,14 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between py-2">
                       <span className="text-sm font-medium text-muted-foreground">Created:</span>
                       <span className="text-sm text-foreground font-medium">
                         {format(new Date(editableTicket.created_at), 'MMM dd, yyyy HH:mm')}
                       </span>
                     </div>
                     <Separator />
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between py-2">
                       <span className="text-sm font-medium text-muted-foreground">Last Updated:</span>
                       <span className="text-sm text-foreground font-medium">
                         {formatDistanceToNow(new Date(editableTicket.updated_at), { addSuffix: true })}
@@ -286,25 +290,25 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
               </Card>
 
               {/* Communication History */}
-              <Card className="rounded-2xl border shadow-sm mb-6">
-                <CardHeader className="pb-3">
+              <Card className="rounded-xl border shadow-sm mb-8">
+                <CardHeader className="pb-4">
                   <CardTitle className="text-base font-medium flex items-center gap-2 text-foreground">
                     <MessageSquare className="h-4 w-4 text-muted-foreground" />
                     Communication History
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-5">
+                  <div className="space-y-6">
                     {mockCommunicationHistory.map((comm, index) => (
                       <div key={comm.id} className="relative">
                         {index !== mockCommunicationHistory.length - 1 && (
-                          <div className="absolute left-2.5 top-8 bottom-0 w-px bg-border" />
+                          <div className="absolute left-3 top-8 bottom-0 w-px bg-border" />
                         )}
                         <div className="flex gap-4">
-                          <div className="h-5 w-5 rounded-full bg-primary flex-shrink-0 mt-1" />
+                          <div className="h-6 w-6 rounded-full bg-primary flex-shrink-0 mt-1" />
                           <div className="flex-1 min-w-0 pb-2">
                             <p className="text-sm text-foreground leading-relaxed">{comm.message}</p>
-                            <div className="flex items-center gap-3 mt-2">
+                            <div className="flex items-center gap-3 mt-3">
                               <span className="text-xs font-medium text-muted-foreground">{comm.author}</span>
                               <span className="text-xs text-muted-foreground">
                                 {formatDistanceToNow(new Date(comm.timestamp), { addSuffix: true })}
@@ -320,13 +324,18 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
             </div>
           </ScrollArea>
 
-          {/* Footer Actions - Sticky */}
-          <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t p-6">
+          {/* Sticky Footer */}
+          <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t px-6 py-4 shadow-lg">
             <div className="flex gap-3">
-              <Button className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground h-11 font-medium">
+              <Button 
+                className="flex-1 h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-sm"
+              >
                 Save Changes
               </Button>
-              <Button variant="outline" className="flex-1 h-11 font-medium">
+              <Button 
+                variant="outline" 
+                className="flex-1 h-11 font-medium shadow-sm hover:bg-muted/80"
+              >
                 Add Note
               </Button>
             </div>
