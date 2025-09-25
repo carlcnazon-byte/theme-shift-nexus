@@ -1,137 +1,146 @@
-import { Building2, DollarSign, Users, TrendingUp, Plus, Search, Filter } from 'lucide-react';
-import { PropertyCard } from '@/components/PropertyCard';
-import { StatsCard } from '@/components/StatsCard';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import React from 'react';
+import { BarChart, Clock, AlertTriangle } from 'lucide-react';
+import { KPICard } from '@/components/dashboard/KPICard';
+import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
+import { QuickActionsPanel } from '@/components/dashboard/QuickActionsPanel';
+import { MiniChart } from '@/components/dashboard/MiniChart';
 
 const Index = () => {
-  // Sample property data
-  const properties = [
+  // Sample dashboard data
+  const kpiData = [
+    {
+      title: 'Active Tickets',
+      value: '247',
+      icon: BarChart,
+      gradient: 'bg-gradient-to-br from-teal-500 to-teal-600',
+      trend: { value: 12, isPositive: true }
+    },
+    {
+      title: 'Urgent Issues',
+      value: '18',
+      icon: '🚨',
+      gradient: 'bg-gradient-to-br from-amber-500 to-amber-600',
+      trend: { value: 5, isPositive: false }
+    },
+    {
+      title: 'Response Time',
+      value: '2.4h',
+      icon: Clock,
+      gradient: 'bg-gradient-to-br from-cyan-500 to-cyan-600',
+      trend: { value: 8, isPositive: true }
+    },
+    {
+      title: 'Vendor Performance',
+      value: '94%',
+      icon: '⭐',
+      gradient: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
+      trend: { value: 3, isPositive: true }
+    }
+  ];
+
+  const recentActivities = [
     {
       id: '1',
-      name: 'Sunset Apartments',
-      address: '123 Oak Street, Downtown',
-      rent: 1850,
-      bedrooms: 2,
-      bathrooms: 2,
-      sqft: 1200,
-      status: 'occupied' as const,
-      image: '',
+      timestamp: '2 min ago',
+      ticketId: 'TK-2024-001',
+      property: '123 Oak Street, Apt 4B',
+      status: 'emergency' as const,
+      description: 'Water leak reported - maintenance dispatched'
     },
     {
       id: '2',
-      name: 'Riverside Condos',
-      address: '456 River Road, Midtown',
-      rent: 2200,
-      bedrooms: 3,
-      bathrooms: 2,
-      sqft: 1450,
-      status: 'vacant' as const,
-      image: '',
+      timestamp: '15 min ago',
+      ticketId: 'TK-2024-002',
+      property: '456 River Road, Unit 12',
+      status: 'urgent' as const,
+      description: 'HVAC system malfunction - vendor assigned'
     },
     {
       id: '3',
-      name: 'Garden View Townhouse',
-      address: '789 Park Avenue, Uptown',
-      rent: 2800,
-      bedrooms: 4,
-      bathrooms: 3,
-      sqft: 1800,
-      status: 'maintenance' as const,
-      image: '',
+      timestamp: '1 hour ago',
+      ticketId: 'TK-2024-003',
+      property: '789 Park Avenue',
+      status: 'standard' as const,
+      description: 'Routine maintenance completed'
     },
     {
       id: '4',
-      name: 'Metro Lofts',
-      address: '321 Industrial Blvd, Arts District',
-      rent: 1650,
-      bedrooms: 1,
-      bathrooms: 1,
-      sqft: 850,
-      status: 'occupied' as const,
-      image: '',
+      timestamp: '2 hours ago',
+      ticketId: 'TK-2024-004',
+      property: '321 Industrial Blvd',
+      status: 'urgent' as const,
+      description: 'Electrical issue reported'
     },
+    {
+      id: '5',
+      timestamp: '3 hours ago',
+      ticketId: 'TK-2024-005',
+      property: '654 Metro Plaza',
+      status: 'standard' as const,
+      description: 'Painting work scheduled'
+    }
   ];
 
-  const stats = [
-    {
-      title: 'Total Properties',
-      value: '24',
-      icon: Building2,
-      trend: { value: 12, isPositive: true },
-      description: 'vs last month',
-    },
-    {
-      title: 'Monthly Revenue',
-      value: '$48,250',
-      icon: DollarSign,
-      trend: { value: 8, isPositive: true },
-      description: 'vs last month',
-    },
-    {
-      title: 'Occupancy Rate',
-      value: '94%',
-      icon: Users,
-      trend: { value: 2, isPositive: true },
-      description: 'vs last month',
-    },
-    {
-      title: 'Portfolio Value',
-      value: '$2.4M',
-      icon: TrendingUp,
-      trend: { value: 15, isPositive: true },
-      description: 'vs last quarter',
-    },
+  const recentProperties = [
+    'Sunset Apartments - 123 Oak Street',
+    'Riverside Condos - 456 River Road',
+    'Garden View Townhouse - 789 Park Avenue',
+    'Metro Lofts - 321 Industrial Blvd',
+    'Downtown Plaza - 654 Metro Plaza'
+  ];
+
+  const emergencyContacts = [
+    { name: 'Fire Department', phone: '911', role: 'Emergency Services' },
+    { name: 'Water Authority', phone: '555-0123', role: 'Utilities' },
+    { name: 'Emergency Plumber', phone: '555-0456', role: 'Maintenance' },
+    { name: 'Security Service', phone: '555-0789', role: 'Security' }
+  ];
+
+  const chartData = [
+    { day: 'Mon', tickets: 45 },
+    { day: 'Tue', tickets: 52 },
+    { day: 'Wed', tickets: 38 },
+    { day: 'Thu', tickets: 61 },
+    { day: 'Fri', tickets: 55 },
+    { day: 'Sat', tickets: 28 },
+    { day: 'Sun', tickets: 22 }
   ];
 
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Dashboard Overview
-          </h1>
-          <p className="text-muted-foreground">
-            Welcome back! Here's what's happening with your properties today.
-          </p>
-        </div>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Property
-        </Button>
+      <div>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Property Management Dashboard
+        </h1>
+        <p className="text-muted-foreground">
+          Monitor tickets, track performance, and manage your properties efficiently.
+        </p>
       </div>
 
-      {/* Stats Grid */}
+      {/* KPI Cards - 4 Column Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
-          <StatsCard key={index} {...stat} />
+        {kpiData.map((kpi, index) => (
+          <KPICard key={index} {...kpi} />
         ))}
       </div>
 
-      {/* Properties Section */}
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-foreground">Properties</h2>
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search properties..." 
-                className="pl-10 w-64 bg-background border-border focus:border-primary focus:ring-primary/20" 
-              />
-            </div>
-            <Button variant="outline" className="border-border hover:bg-accent">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-          </div>
+      {/* Mini Chart Section */}
+      <MiniChart data={chartData} />
+
+      {/* Main Content - Activity Feed + Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Activity Feed - 2/3 width */}
+        <div className="lg:col-span-2">
+          <ActivityFeed activities={recentActivities} />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
+        {/* Quick Actions Sidebar - 1/3 width */}
+        <div className="lg:col-span-1">
+          <QuickActionsPanel 
+            recentProperties={recentProperties}
+            emergencyContacts={emergencyContacts}
+          />
         </div>
       </div>
     </div>

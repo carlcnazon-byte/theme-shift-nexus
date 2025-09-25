@@ -22,7 +22,7 @@ export const TopNavigation: React.FC = () => {
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-2 text-foreground hover:text-primary">
+            <Button variant="ghost" className="flex items-center gap-2 text-foreground hover:bg-accent hover:text-accent-foreground">
               <span className="font-semibold text-lg">Demo PM Co</span>
               <ChevronDown className="h-4 w-4" />
             </Button>
