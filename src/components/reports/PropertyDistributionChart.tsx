@@ -53,53 +53,31 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
   };
 
   const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, value, index }: any) => {
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-    const percentage = data[index]?.percentage;
-    const count = data[index]?.count;
-
-    // Only show label if percentage is greater than 5%
-    if (percentage && percentage > 5) {
-      return (
-        <text 
-          x={x} 
-          y={y} 
-          fill="white" 
-          textAnchor={x > cx ? 'start' : 'end'} 
-          dominantBaseline="central"
-          fontSize={11}
-          fontWeight="medium"
-        >
-          {`${percentage}% (${count})`}
-        </text>
-      );
-    }
+    // Remove labels from pie slices to make it cleaner - all info is in the side list
     return null;
   };
 
   const CustomLegend = ({ payload }: any) => {
     return (
-      <div className="mt-6">
-        <h4 className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
+      <div className="mt-4">
+        <h4 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
           <span>List Properties</span>
           <div className="flex-1 h-px bg-border" />
         </h4>
-        <div className="space-y-2">
+        <div className="space-y-3">
           {payload?.map((entry: any, index: number) => {
             const itemData = data.find(d => d.property === entry.value);
             const rank = sortedData.findIndex(d => d.property === entry.value) + 1;
             
             return (
-              <div key={index} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-muted/50 transition-colors">
+              <div key={index} className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-muted/30 transition-colors border border-border/50">
                 <div className="flex items-center gap-3">
                   <div 
-                    className="w-4 h-4 rounded-full flex-shrink-0" 
+                    className="w-5 h-5 rounded-full flex-shrink-0 ring-2 ring-background shadow-sm" 
                     style={{ backgroundColor: entry.color }}
                   />
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-foreground truncate">
+                    <div className="text-base font-medium text-foreground truncate">
                       {entry.value}
                     </div>
                     {rank <= 3 && (
@@ -109,11 +87,11 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
                     )}
                   </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <div className="text-sm font-semibold text-foreground">
+                <div className="text-right flex-shrink-0 ml-4">
+                  <div className="text-lg font-bold text-foreground">
                     {itemData?.count}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-sm text-muted-foreground font-medium">
                     {itemData?.percentage}%
                   </div>
                 </div>
@@ -150,12 +128,11 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={<CustomLabel />}
-                outerRadius={100}
-                innerRadius={40}
+                outerRadius={110}
+                innerRadius={45}
                 fill="#8884d8"
                 dataKey="count"
-                paddingAngle={2}
+                paddingAngle={1}
                 animationBegin={0}
                 animationDuration={800}
               >
@@ -172,7 +149,7 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
                 textAnchor="middle" 
                 dominantBaseline="middle" 
                 className="fill-foreground"
-                fontSize={24}
+                fontSize={32}
                 fontWeight="bold"
               >
                 {totalTickets}
@@ -183,7 +160,8 @@ export const PropertyDistributionChart: React.FC<PropertyDistributionChartProps>
                 textAnchor="middle" 
                 dominantBaseline="middle" 
                 className="fill-muted-foreground"
-                fontSize={12}
+                fontSize={14}
+                fontWeight="medium"
               >
                 Total Tickets
               </text>
