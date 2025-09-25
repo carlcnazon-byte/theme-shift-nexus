@@ -71,70 +71,70 @@ export const CallsList: React.FC<CallsListProps> = ({ calls, selectedCall, onCal
 
   return (
     <Card className="bg-card border-border h-[calc(100vh-280px)]">
-      <CardContent className="p-0">
+      <CardContent className="p-2">
         <ScrollArea className="h-full">
-          <div className="p-4 space-y-3">
+          <div className="p-2 space-y-2">
             {calls.map((call) => (
               <div
                 key={call.id}
                 className={`
-                  p-4 rounded-lg border cursor-pointer transition-all duration-200
+                  p-4 rounded-xl border cursor-pointer transition-all duration-200 hover:shadow-sm
                   ${selectedCall?.id === call.id 
-                    ? 'bg-primary/10 border-primary' 
-                    : 'bg-background border-border hover:bg-accent/50'
+                    ? 'bg-primary/5 border-primary/20 ring-1 ring-primary/10' 
+                    : 'bg-card border-border hover:bg-accent/30 hover:border-accent'
                   }
                 `}
                 onClick={() => onCallSelect(call)}
               >
-                {/* Header Row */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    {getDirectionIcon(call)}
-                    <span className="font-medium text-foreground">
-                      {call.contact_name || 'Unknown Caller'}
-                    </span>
-                  </div>
-                  {getStatusBadge(call)}
-                </div>
+        {/* Header Row */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            {getDirectionIcon(call)}
+            <span className="font-semibold text-foreground text-base">
+              {call.contact_name || 'Unknown Caller'}
+            </span>
+          </div>
+          {getStatusBadge(call)}
+        </div>
 
-                {/* Phone Number */}
-                <div className="text-sm text-muted-foreground mb-2">
-                  {call.phone_number}
-                </div>
+        {/* Phone Number and Duration */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-sm text-muted-foreground font-medium">
+            {call.phone_number}
+          </div>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              <span>{formatDuration(call.call_duration)}</span>
+            </div>
+            {call.call_quality && renderQualityStars(call.call_quality)}
+          </div>
+        </div>
 
-                {/* Duration and Time */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      <span>{formatDuration(call.call_duration)}</span>
-                    </div>
-                    {call.call_quality && renderQualityStars(call.call_quality)}
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(call.created_at), { addSuffix: true })}
-                  </span>
-                </div>
+        {/* Associated Ticket */}
+        {call.ticket_id && (
+          <div className="flex items-center gap-2 mb-3">
+            <Ticket className="h-3 w-3 text-primary" />
+            <span className="text-xs text-primary font-medium">
+              {call.ticket_id}
+            </span>
+          </div>
+        )}
 
-                {/* Associated Ticket */}
-                {call.ticket_id && (
-                  <div className="flex items-center gap-2 mb-2">
-                    <Ticket className="h-3 w-3 text-primary" />
-                    <span className="text-xs text-primary font-medium">
-                      {call.ticket_id}
-                    </span>
-                  </div>
-                )}
+        {/* Summary */}
+        {call.summary && (
+          <div className="flex items-start gap-2 mb-2">
+            <FileText className="h-3 w-3 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-muted-foreground line-clamp-2">
+              {call.summary}
+            </p>
+          </div>
+        )}
 
-                {/* Summary */}
-                {call.summary && (
-                  <div className="flex items-start gap-2">
-                    <FileText className="h-3 w-3 text-muted-foreground mt-0.5 flex-shrink-0" />
-                    <p className="text-xs text-muted-foreground line-clamp-2">
-                      {call.summary}
-                    </p>
-                  </div>
-                )}
+        {/* Time */}
+        <div className="text-xs text-muted-foreground text-right">
+          {formatDistanceToNow(new Date(call.created_at), { addSuffix: true })}
+        </div>
               </div>
             ))}
           </div>

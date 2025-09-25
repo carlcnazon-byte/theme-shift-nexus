@@ -3,10 +3,10 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { Phone, Clock, Ticket, User, FileText, Play, Pause, Volume2, Download, Copy, Search, UserPlus, ClipboardList } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { CallStatusChip } from '@/components/ui/call-status-chip';
 import { Call } from '@/pages/Calls';
 import { AudioPlayer } from '@/components/calls/AudioPlayer';
 import { TranscriptViewer } from '@/components/calls/TranscriptViewer';
@@ -61,13 +61,7 @@ export const CallDetails: React.FC<CallDetailsProps> = ({ call }) => {
                 <CardTitle className="text-xl">
                   {call.contact_name || 'Unknown Caller'}
                 </CardTitle>
-                <Badge className={
-                  call.status === 'completed' ? 'bg-green-500/20 text-green-300' :
-                  call.status === 'missed' ? 'bg-red-500/20 text-red-300' :
-                  'bg-amber-500/20 text-amber-300'
-                }>
-                  {call.status}
-                </Badge>
+                <CallStatusChip status={call.status} />
               </div>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
