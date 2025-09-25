@@ -1,7 +1,10 @@
 import React, { useState, useMemo } from 'react';
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { CallsFilterBar } from '@/components/calls/CallsFilterBar';
 import { CallsList } from '@/components/calls/CallsList';
 import { CallDetails } from '@/components/calls/CallDetails';
+import { CreateTicketModal } from '@/components/tickets/CreateTicketModal';
 
 export interface Call {
   id: string;
@@ -28,6 +31,7 @@ export interface CallFilters {
 
 const Calls = () => {
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [filters, setFilters] = useState<CallFilters>({
     tab: 'all',
     dateRange: null,
@@ -245,13 +249,23 @@ Caller: Perfect, I'll be waiting for your call.`,
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Calls & Communications
-        </h1>
-        <p className="text-muted-foreground">
-          Review call transcripts and manage communications history.
-        </p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Calls & Communications
+          </h1>
+          <p className="text-muted-foreground">
+            Review call transcripts and manage communications history.
+          </p>
+        </div>
+        
+        <Button
+          onClick={() => setIsCreateModalOpen(true)}
+          className="gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          Create Ticket
+        </Button>
       </div>
 
       {/* Filter Bar */}
@@ -291,6 +305,12 @@ Caller: Perfect, I'll be waiting for your call.`,
           )}
         </div>
       </div>
+
+      {/* Create Ticket Modal */}
+      <CreateTicketModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </div>
   );
 };

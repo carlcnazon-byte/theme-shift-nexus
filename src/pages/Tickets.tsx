@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { Grid, Table } from 'lucide-react';
+import { Grid, Table, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TicketsFilterBar } from '@/components/tickets/TicketsFilterBar';
 import { TicketsTable } from '@/components/tickets/TicketsTable';
 import { TicketGrid } from '@/components/tickets/TicketGrid';
 import { TicketDrawer } from '@/components/tickets/TicketDrawer';
+import { CreateTicketModal } from '@/components/tickets/CreateTicketModal';
 
 export interface Ticket {
   ticket_id: string;
@@ -29,6 +30,7 @@ export interface TicketFilters {
 const Tickets = () => {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [filters, setFilters] = useState<TicketFilters>({
     search: '',
     property: 'all',
@@ -162,26 +164,36 @@ const Tickets = () => {
           </p>
         </div>
 
-        {/* View Toggle */}
-        <div className="flex gap-2">
+        {/* Create Button and View Toggle */}
+        <div className="flex gap-3">
           <Button
-            variant={viewMode === 'cards' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('cards')}
+            onClick={() => setIsCreateModalOpen(true)}
             className="gap-2"
           >
-            <Grid className="w-4 h-4" />
-            Cards
+            <Plus className="w-4 h-4" />
+            Create Ticket
           </Button>
-          <Button
-            variant={viewMode === 'table' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('table')}
-            className="gap-2"
-          >
-            <Table className="w-4 h-4" />
-            Table
-          </Button>
+          
+          <div className="flex gap-2">
+            <Button
+              variant={viewMode === 'cards' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('cards')}
+              className="gap-2"
+            >
+              <Grid className="w-4 h-4" />
+              Cards
+            </Button>
+            <Button
+              variant={viewMode === 'table' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('table')}
+              className="gap-2"
+            >
+              <Table className="w-4 h-4" />
+              Table
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -211,6 +223,12 @@ const Tickets = () => {
         ticket={selectedTicket}
         isOpen={!!selectedTicket}
         onClose={handleCloseDrawer}
+      />
+
+      {/* Create Ticket Modal */}
+      <CreateTicketModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
       />
     </div>
   );
