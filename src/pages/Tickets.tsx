@@ -12,7 +12,7 @@ export interface Ticket {
   unit_address: string;
   issue_description: string;
   urgency: 'emergency' | 'urgent' | 'standard';
-  status: 'open' | 'vendor_notified' | 'in_progress' | 'resolved';
+  status: 'open' | 'vendor_notified' | 'in_progress' | 'resolved' | 'canceled';
   service_provider?: string;
   created_at: string;
   updated_at: string;
