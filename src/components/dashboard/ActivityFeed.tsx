@@ -51,30 +51,29 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
           return (
             <div
               key={activity.id}
-              className="flex items-start gap-4 p-4 rounded-lg hover:bg-accent/10 transition-colors cursor-pointer border border-border/50 hover:border-border"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent/10 transition-colors cursor-pointer"
             >
-              <div className="flex-shrink-0 pt-0.5">
+              <div className="flex-shrink-0">
                 <Badge 
-                  variant="secondary" 
-                  className={`${statusConfig.className} border-0 font-medium text-xs px-2.5 py-1`}
+                  className={`${statusConfig.className} border-0 font-medium text-xs px-3 py-1.5 min-w-[90px] justify-center`}
                 >
-                  <span className="mr-1.5 text-xs">{statusConfig.icon}</span>
+                  <span className="mr-1.5">{statusConfig.icon}</span>
                   {statusConfig.label}
                 </Badge>
               </div>
-              <div className="flex-1 min-w-0 space-y-1">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-semibold text-foreground truncate">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-sm font-semibold text-foreground">
                     Ticket #{activity.ticketId}
                   </p>
                   <time className="text-xs text-muted-foreground whitespace-nowrap">
                     {activity.timestamp}
                   </time>
                 </div>
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-sm text-muted-foreground mb-1">
                   {activity.property}
                 </p>
-                <p className="text-sm text-foreground leading-relaxed">
+                <p className="text-sm text-foreground">
                   {activity.description}
                 </p>
               </div>
