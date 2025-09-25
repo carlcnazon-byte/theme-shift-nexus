@@ -68,7 +68,7 @@ export const CallsFilterBar: React.FC<CallsFilterBarProps> = ({
 
       {/* Search and Filters Row */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
+        <div className="relative w-80">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search calls, names, phone numbers..."
@@ -77,6 +77,9 @@ export const CallsFilterBar: React.FC<CallsFilterBarProps> = ({
             onChange={(e) => onFiltersChange({ search: e.target.value })}
           />
         </div>
+        <Button variant="outline" className="whitespace-nowrap">
+          <Search className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Filter Controls */}
