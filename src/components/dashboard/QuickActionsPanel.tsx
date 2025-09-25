@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, UserPlus, Phone, MapPin } from 'lucide-react';
+import { CreateTicketModal } from '@/components/tickets/CreateTicketModal';
 
 interface QuickActionsPanelProps {
   recentProperties: string[];
@@ -13,6 +14,8 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
   recentProperties, 
   emergencyContacts 
 }) => {
+  const [isCreateTicketModalOpen, setIsCreateTicketModalOpen] = useState(false);
+
   return (
     <div className="space-y-6">
       {/* Quick Actions */}
@@ -21,7 +24,10 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
           <CardTitle className="text-foreground">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button 
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+            onClick={() => setIsCreateTicketModalOpen(true)}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Create Ticket
           </Button>
@@ -79,6 +85,12 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
           ))}
         </CardContent>
       </Card>
+
+      {/* Create Ticket Modal */}
+      <CreateTicketModal 
+        isOpen={isCreateTicketModalOpen}
+        onClose={() => setIsCreateTicketModalOpen(false)}
+      />
     </div>
   );
 };
