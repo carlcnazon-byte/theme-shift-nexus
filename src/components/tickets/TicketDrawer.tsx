@@ -156,7 +156,7 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
                   <SelectTrigger className="w-full h-10 bg-background border-input shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="z-[10001]">
+                  <SelectContent className="z-[99999999]">
                     <SelectItem value="emergency">Emergency</SelectItem>
                     <SelectItem value="urgent">Urgent</SelectItem>
                     <SelectItem value="standard">Standard</SelectItem>
@@ -171,7 +171,7 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
                   <SelectTrigger className="w-full h-10 bg-background border-input shadow-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="z-[10001]">
+                  <SelectContent className="z-[99999999]">
                     <SelectItem value="open">Open</SelectItem>
                     <SelectItem value="vendor_notified">Vendor Notified</SelectItem>
                     <SelectItem value="in_progress">In Progress</SelectItem>
@@ -237,7 +237,7 @@ export const TicketDrawer: React.FC<TicketDrawerProps> = ({ ticket, isOpen, onCl
                     <SelectTrigger className="w-full h-10 shadow-sm">
                       <SelectValue placeholder="Select vendor..." />
                     </SelectTrigger>
-                    <SelectContent className="z-[10001]">
+                    <SelectContent className="z-[99999999]">
                       {mockVendors.map((vendor) => (
                         <SelectItem key={vendor} value={vendor}>
                           {vendor}
