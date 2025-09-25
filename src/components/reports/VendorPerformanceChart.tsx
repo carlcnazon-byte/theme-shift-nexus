@@ -1,6 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
-import { Badge } from '@/components/ui/badge';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 interface VendorPerformanceData {
   vendor: string;
@@ -13,80 +12,29 @@ interface VendorPerformanceChartProps {
 }
 
 export const VendorPerformanceChart: React.FC<VendorPerformanceChartProps> = ({ data }) => {
-  // Sort data by jobs completed (descending)
+  // Sort data by jobs completed (descending) and take top 8
   const sortedData = [...data].sort((a, b) => b.jobs - a.jobs).slice(0, 8);
 
   const getBarColor = (rating: number) => {
-    if (rating >= 4.7) return '#10b981'; // Excellent
-    if (rating >= 4.3) return '#06b6d4'; // Good
-    if (rating >= 4.0) return '#f59e0b'; // Average
-    return '#ef4444'; // Poor
+    if (rating >= 4.7) return 'hsl(var(--chart-1))'; // Excellent - Blue
+    if (rating >= 4.3) return 'hsl(var(--chart-2))'; // Good - Green  
+    if (rating >= 4.0) return 'hsl(var(--chart-3))'; // Average - Orange
+    return 'hsl(var(--chart-4))'; // Poor - Red
   };
 
   const formatVendorName = (name: string) => {
-    // Truncate long vendor names for display
-    return name.length > 20 ? `${name.substring(0, 18)}...` : name;
+    return name.length > 25 ? `${name.substring(0, 22)}...` : name;
   };
 
-  const formatVendorWithRating = (vendor: string) => {
-    const vendorData = sortedData.find(d => d.vendor === vendor);
-    if (!vendorData) return vendor;
-    
-    const performanceLevel = vendorData.rating >= 4.7 ? 'Excellent' : 
-                           vendorData.rating >= 4.3 ? 'Good' : 
-                           vendorData.rating >= 4.0 ? 'Average' : 'Poor';
-    
-    return `${formatVendorName(vendor)} (${vendorData.rating}/5 - ${performanceLevel})`;
-  };
-
-  const CustomLabel = (props: any) => {
-    const { x, y, width, height, value } = props;
-    return (
-      <text 
-        x={x + width + 5} 
-        y={y + height / 2} 
-        fill="hsl(var(--foreground))" 
-        textAnchor="start" 
-        dominantBaseline="middle"
-        fontSize={12}
-        fontWeight="medium"
-      >
-        {`${value} jobs`}
-      </text>
-    );
-  };
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
-      
       return (
-        <div className="bg-background border border-border rounded-lg p-3 shadow-lg max-w-xs">
+        <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
           <p className="text-foreground font-medium">{data.vendor}</p>
-          <div className="space-y-1 mt-2">
-            <div className="text-sm">
-              <span className="text-muted-foreground">Jobs Completed: </span>
-              <span className="text-foreground font-medium">{data.jobs}</span>
-            </div>
-            <div className="text-sm">
-              <span className="text-muted-foreground">Average Rating: </span>
-              <span className="text-foreground font-medium">{data.rating}/5.0</span>
-            </div>
-            <div className="flex items-center gap-1 mt-1">
-              {Array.from({ length: 5 }, (_, i) => (
-                <div
-                  key={i}
-                  className={`w-3 h-3 rounded-full ${
-                    i < Math.floor(data.rating)
-                      ? 'bg-yellow-400'
-                      : i < data.rating
-                      ? 'bg-yellow-400/50'
-                      : 'bg-gray-300 dark:bg-gray-600'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
+          <p className="text-sm text-muted-foreground mt-1">
+            {data.jobs} jobs • {data.rating}/5.0 rating
+          </p>
         </div>
       );
     }
@@ -99,7 +47,7 @@ export const VendorPerformanceChart: React.FC<VendorPerformanceChartProps> = ({ 
         <BarChart 
           data={sortedData} 
           layout="horizontal"
-          margin={{ top: 20, right: 30, left: 80, bottom: 5 }}
+          margin={{ top: 20, right: 30, left: 120, bottom: 60 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
           <XAxis 
@@ -111,9 +59,9 @@ export const VendorPerformanceChart: React.FC<VendorPerformanceChartProps> = ({ 
             type="category"
             dataKey="vendor"
             stroke="hsl(var(--muted-foreground))"
-            fontSize={10}
-            tickFormatter={formatVendorWithRating}
-            width={150}
+            fontSize={12}
+            tickFormatter={formatVendorName}
+            width={110}
           />
           <Tooltip content={<CustomTooltip />} />
           
@@ -124,35 +72,27 @@ export const VendorPerformanceChart: React.FC<VendorPerformanceChartProps> = ({ 
             {sortedData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={getBarColor(entry.rating)} />
             ))}
-            <LabelList content={<CustomLabel />} />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
       
-      {/* Top Performer Badge */}
-      <div className="flex justify-center mb-2">
-        <Badge variant="default" className="text-sm">
-          🏆 Top Performer: {sortedData[0]?.vendor} ({sortedData[0]?.jobs} jobs, {sortedData[0]?.rating}/5)
-        </Badge>
-      </div>
-      
-      {/* Legend */}
-      <div className="flex items-center justify-center gap-4 mt-4 text-xs">
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-green-500" />
-          <span className="text-muted-foreground">Excellent (4.7+)</span>
+      {/* Clean Legend */}
+      <div className="flex items-center justify-center gap-6 mt-4 text-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(var(--chart-1))' }} />
+          <span className="text-muted-foreground">Excellent</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-cyan-500" />
-          <span className="text-muted-foreground">Good (4.3+)</span>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(var(--chart-2))' }} />
+          <span className="text-muted-foreground">Good</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-amber-500" />
-          <span className="text-muted-foreground">Average (4.0+)</span>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(var(--chart-3))' }} />
+          <span className="text-muted-foreground">Average</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-red-500" />
-          <span className="text-muted-foreground">Poor (&lt;4.0)</span>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded" style={{ backgroundColor: 'hsl(var(--chart-4))' }} />
+          <span className="text-muted-foreground">Poor</span>
         </div>
       </div>
     </div>
