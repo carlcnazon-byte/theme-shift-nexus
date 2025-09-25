@@ -53,15 +53,14 @@ export const TicketsFilterBar: React.FC<TicketsFilterBarProps> = ({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search tickets, properties, descriptions..."
+            placeholder="Search tickets, properties..."
             className="pl-10 bg-background border-border focus:border-primary focus:ring-primary/20"
             value={filters.search}
             onChange={(e) => onFiltersChange({ search: e.target.value })}
           />
         </div>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground whitespace-nowrap">
-          <Plus className="h-4 w-4 mr-2" />
-          Create Ticket
+        <Button variant="outline" className="whitespace-nowrap">
+          <Search className="h-4 w-4" />
         </Button>
       </div>
 

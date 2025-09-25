@@ -164,8 +164,8 @@ const Tickets = () => {
           </p>
         </div>
 
-        {/* Create Button and View Toggle */}
-        <div className="flex gap-3">
+        {/* Action Buttons */}
+        <div className="flex gap-2">
           <Button
             onClick={() => setIsCreateModalOpen(true)}
             className="gap-2"
@@ -174,26 +174,24 @@ const Tickets = () => {
             Create Ticket
           </Button>
           
-          <div className="flex gap-2">
-            <Button
-              variant={viewMode === 'cards' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('cards')}
-              className="gap-2"
-            >
-              <Grid className="w-4 h-4" />
-              Cards
-            </Button>
-            <Button
-              variant={viewMode === 'table' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('table')}
-              className="gap-2"
-            >
-              <Table className="w-4 h-4" />
-              Table
-            </Button>
-          </div>
+          <Button
+            variant={viewMode === 'cards' ? 'default' : 'outline'}
+            size="default"
+            onClick={() => setViewMode('cards')}
+            className="gap-2"
+          >
+            <Grid className="w-4 h-4" />
+            Cards
+          </Button>
+          <Button
+            variant={viewMode === 'table' ? 'default' : 'outline'}
+            size="default"
+            onClick={() => setViewMode('table')}
+            className="gap-2"
+          >
+            <Table className="w-4 h-4" />
+            Table
+          </Button>
         </div>
       </div>
 
