@@ -27,9 +27,9 @@ const Tickets = () => {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [filters, setFilters] = useState<TicketFilters>({
     search: '',
-    property: '',
-    urgency: '',
-    status: '',
+    property: 'all',
+    urgency: 'all',
+    status: 'all',
     dateRange: null,
   });
 
@@ -110,9 +110,9 @@ const Tickets = () => {
         ticket.unit_address.toLowerCase().includes(filters.search.toLowerCase()) ||
         ticket.issue_description.toLowerCase().includes(filters.search.toLowerCase());
 
-      const matchesProperty = filters.property === '' || ticket.property_name === filters.property;
-      const matchesUrgency = filters.urgency === '' || ticket.urgency === filters.urgency;
-      const matchesStatus = filters.status === '' || ticket.status === filters.status;
+      const matchesProperty = filters.property === '' || filters.property === 'all' || ticket.property_name === filters.property;
+      const matchesUrgency = filters.urgency === '' || filters.urgency === 'all' || ticket.urgency === filters.urgency;
+      const matchesStatus = filters.status === '' || filters.status === 'all' || ticket.status === filters.status;
 
       const matchesDateRange = !filters.dateRange || 
         (!filters.dateRange.from && !filters.dateRange.to) ||
@@ -138,9 +138,9 @@ const Tickets = () => {
   const handleClearFilters = () => {
     setFilters({
       search: '',
-      property: '',
-      urgency: '',
-      status: '',
+      property: 'all',
+      urgency: 'all',
+      status: 'all',
       dateRange: null,
     });
   };

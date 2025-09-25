@@ -44,7 +44,7 @@ export const TicketsFilterBar: React.FC<TicketsFilterBarProps> = ({
     { value: 'resolved', label: 'Resolved' }
   ];
 
-  const hasActiveFilters = filters.search || filters.property || filters.urgency || filters.status || filters.dateRange;
+  const hasActiveFilters = filters.search || (filters.property && filters.property !== 'all') || (filters.urgency && filters.urgency !== 'all') || (filters.status && filters.status !== 'all') || filters.dateRange;
 
   return (
     <div className="space-y-4">
@@ -73,7 +73,7 @@ export const TicketsFilterBar: React.FC<TicketsFilterBarProps> = ({
             <SelectValue placeholder="Property" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Properties</SelectItem>
+            <SelectItem value="all">All Properties</SelectItem>
             {properties.map((property) => (
               <SelectItem key={property} value={property}>
                 {property}
@@ -88,7 +88,7 @@ export const TicketsFilterBar: React.FC<TicketsFilterBarProps> = ({
             <SelectValue placeholder="Urgency" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Urgency</SelectItem>
+            <SelectItem value="all">All Urgency</SelectItem>
             {urgencyOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
@@ -103,7 +103,7 @@ export const TicketsFilterBar: React.FC<TicketsFilterBarProps> = ({
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Status</SelectItem>
+            <SelectItem value="all">All Status</SelectItem>
             {statusOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
@@ -178,30 +178,30 @@ export const TicketsFilterBar: React.FC<TicketsFilterBarProps> = ({
               />
             </Badge>
           )}
-          {filters.property && (
+          {filters.property && filters.property !== 'all' && (
             <Badge variant="secondary" className="gap-2">
               Property: {filters.property}
               <X 
                 className="h-3 w-3 cursor-pointer" 
-                onClick={() => onFiltersChange({ property: '' })}
+                onClick={() => onFiltersChange({ property: 'all' })}
               />
             </Badge>
           )}
-          {filters.urgency && (
+          {filters.urgency && filters.urgency !== 'all' && (
             <Badge variant="secondary" className="gap-2">
               Urgency: {urgencyOptions.find(o => o.value === filters.urgency)?.label}
               <X 
                 className="h-3 w-3 cursor-pointer" 
-                onClick={() => onFiltersChange({ urgency: '' })}
+                onClick={() => onFiltersChange({ urgency: 'all' })}
               />
             </Badge>
           )}
-          {filters.status && (
+          {filters.status && filters.status !== 'all' && (
             <Badge variant="secondary" className="gap-2">
               Status: {statusOptions.find(o => o.value === filters.status)?.label}
               <X 
                 className="h-3 w-3 cursor-pointer" 
-                onClick={() => onFiltersChange({ status: '' })}
+                onClick={() => onFiltersChange({ status: 'all' })}
               />
             </Badge>
           )}
