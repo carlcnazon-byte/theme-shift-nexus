@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from 'react';
+import { Grid, Table } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { TicketsFilterBar } from '@/components/tickets/TicketsFilterBar';
 import { TicketsTable } from '@/components/tickets/TicketsTable';
+import { TicketGrid } from '@/components/tickets/TicketGrid';
 import { TicketDrawer } from '@/components/tickets/TicketDrawer';
 
 export interface Ticket {
@@ -25,6 +28,7 @@ export interface TicketFilters {
 
 const Tickets = () => {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [filters, setFilters] = useState<TicketFilters>({
     search: '',
     property: 'all',
@@ -148,13 +152,37 @@ const Tickets = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Tickets Management
-        </h1>
-        <p className="text-muted-foreground">
-          Track and manage property maintenance tickets efficiently.
-        </p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Tickets Management
+          </h1>
+          <p className="text-muted-foreground">
+            Track and manage property maintenance tickets efficiently.
+          </p>
+        </div>
+
+        {/* View Toggle */}
+        <div className="flex gap-2">
+          <Button
+            variant={viewMode === 'cards' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('cards')}
+            className="gap-2"
+          >
+            <Grid className="w-4 h-4" />
+            Cards
+          </Button>
+          <Button
+            variant={viewMode === 'table' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('table')}
+            className="gap-2"
+          >
+            <Table className="w-4 h-4" />
+            Table
+          </Button>
+        </div>
       </div>
 
       {/* Filter Bar */}
@@ -165,11 +193,18 @@ const Tickets = () => {
         totalResults={filteredTickets.length}
       />
 
-      {/* Tickets Table */}
-      <TicketsTable
-        tickets={filteredTickets}
-        onTicketSelect={handleTicketSelect}
-      />
+      {/* Tickets Display */}
+      {viewMode === 'cards' ? (
+        <TicketGrid
+          tickets={filteredTickets}
+          onTicketSelect={handleTicketSelect}
+        />
+      ) : (
+        <TicketsTable
+          tickets={filteredTickets}
+          onTicketSelect={handleTicketSelect}
+        />
+      )}
 
       {/* Ticket Drawer */}
       <TicketDrawer

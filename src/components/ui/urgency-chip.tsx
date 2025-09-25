@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Clock, Wrench } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
@@ -23,21 +23,21 @@ export const UrgencyChip: React.FC<UrgencyChipProps> = ({
           label: 'Emergency',
           className: 'bg-red-100 text-red-700',
           dotClassName: 'bg-red-500',
-          showIcon: true
+          icon: AlertTriangle
         };
       case 'urgent':
         return {
-          label: 'Urgent',
+          label: 'Urgent', 
           className: 'bg-amber-100 text-amber-700',
           dotClassName: 'bg-amber-500',
-          showIcon: false
+          icon: Clock
         };
       case 'standard':
         return {
           label: 'Standard',
           className: 'border border-gray-300 text-gray-600 bg-transparent',
           dotClassName: 'bg-gray-400',
-          showIcon: false
+          icon: Wrench
         };
     }
   };
@@ -57,13 +57,15 @@ export const UrgencyChip: React.FC<UrgencyChipProps> = ({
     );
   }
 
+  const IconComponent = config.icon;
+
   return (
     <div className={cn(
       'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium',
       config.className,
       className
     )}>
-      {config.showIcon && <AlertTriangle className="w-3 h-3" />}
+      <IconComponent className="w-3 h-3" />
       {config.label}
     </div>
   );
