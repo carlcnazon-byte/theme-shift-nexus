@@ -18,8 +18,8 @@ export const VendorCard: React.FC<VendorCardProps> = ({
       length: 5
     }, (_, i) => <Star key={i} className={`h-4 w-4 ${i < Math.floor(rating) ? 'fill-yellow-400 text-yellow-400' : i < rating ? 'fill-yellow-400/50 text-yellow-400/50' : 'fill-gray-300 text-gray-300 dark:fill-gray-600 dark:text-gray-600'}`} />);
   };
-  return <Card className="bg-card border-border hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-[480px] flex flex-col">
-      <CardContent className="p-5 flex-1 flex flex-col h-full">
+  return <Card className="bg-card border-border hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-[520px] flex flex-col">
+      <CardContent className="p-6 flex-1 flex flex-col h-full">
         {/* Header with Avatar and Status - Fixed height section */}
         <div className="flex items-start justify-between mb-4 h-[60px]">
           <div className="flex items-center gap-3 min-w-0 flex-1">
