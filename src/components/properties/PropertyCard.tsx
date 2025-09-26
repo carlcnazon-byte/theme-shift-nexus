@@ -1,7 +1,6 @@
 import React from 'react';
 import { PropertyUnit } from '@/types/property';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Phone, Mail, MoreVertical, Eye, Edit, MessageSquare } from 'lucide-react';
@@ -66,31 +65,31 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       <div className="flex flex-col gap-2">
         <div className="text-xs font-medium text-muted-foreground">Status</div>
         <div className="flex flex-wrap gap-2">
-          {/* Active/Inactive Badge */}
-          <Badge className={cn(
-            "px-2 py-1 text-xs font-medium rounded-full",
+          {/* Active/Inactive Chip */}
+          <div className={cn(
+            "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border-0",
             property.is_active 
-              ? "bg-emerald-500 text-white border-emerald-500" 
-              : "bg-slate-500 text-white border-slate-500"
+              ? "bg-success/10 text-success" 
+              : "bg-muted text-muted-foreground"
           )}>
-            {property.is_active ? "🟢 Active" : "⚫ Inactive"}
-          </Badge>
+            {property.is_active ? "Active" : "Inactive"}
+          </div>
           
-          {/* Occupied/Vacant Badge */}
-          <Badge className={cn(
-            "px-2 py-1 text-xs font-medium rounded-full",
+          {/* Occupied/Vacant Chip */}
+          <div className={cn(
+            "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border-0",
             property.is_occupied 
-              ? "bg-teal-500 text-white border-teal-500" 
-              : "bg-amber-500 text-white border-amber-500"
+              ? "bg-info/10 text-info" 
+              : "bg-warning/10 text-warning"
           )}>
-            {property.is_occupied ? "🏠 Occupied" : "🏠 Vacant"}
-          </Badge>
+            {property.is_occupied ? "Occupied" : "Vacant"}
+          </div>
           
-          {/* Emergency Badge - Always show position but conditional content */}
+          {/* Emergency Chip - Always show position but conditional content */}
           {property.emergency_contact && (
-            <Badge className="px-2 py-1 text-xs font-medium rounded-full bg-destructive text-destructive-foreground border-destructive">
-              🚨 Emergency
-            </Badge>
+            <div className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border-0 bg-destructive/10 text-destructive">
+              Emergency
+            </div>
           )}
         </div>
       </div>
