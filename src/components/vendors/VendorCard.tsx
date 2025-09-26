@@ -72,7 +72,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({
         </div>
 
         {/* Rating - Fixed height section */}
-        <div className="flex items-center gap-2 mb-4 h-[20px] py-[15px]">
+        <div className="flex items-center gap-2 mb-4 h-[20px] py-[20px]">
           <div className="flex items-center">
             {renderStars(vendor.average_rating || 0)}
           </div>
