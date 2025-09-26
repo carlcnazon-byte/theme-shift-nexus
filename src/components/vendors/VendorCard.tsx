@@ -3,39 +3,22 @@ import { Phone, Mail, Star, Clock, Briefcase, MoreHorizontal, Eye, Edit, UserPlu
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { VendorStatusChip } from '@/components/ui/vendor-status-chip';
 import { ServiceCategoryChip, ServiceCategory } from '@/components/ui/service-category-chip';
 import { ServiceProvider } from '@/pages/Vendors';
-
 interface VendorCardProps {
   vendor: ServiceProvider;
 }
-
-export const VendorCard: React.FC<VendorCardProps> = ({ vendor }) => {
-
+export const VendorCard: React.FC<VendorCardProps> = ({
+  vendor
+}) => {
   const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`h-4 w-4 ${
-          i < Math.floor(rating)
-            ? 'fill-yellow-400 text-yellow-400'
-            : i < rating
-            ? 'fill-yellow-400/50 text-yellow-400/50'
-            : 'fill-gray-300 text-gray-300 dark:fill-gray-600 dark:text-gray-600'
-        }`}
-      />
-    ));
+    return Array.from({
+      length: 5
+    }, (_, i) => <Star key={i} className={`h-4 w-4 ${i < Math.floor(rating) ? 'fill-yellow-400 text-yellow-400' : i < rating ? 'fill-yellow-400/50 text-yellow-400/50' : 'fill-gray-300 text-gray-300 dark:fill-gray-600 dark:text-gray-600'}`} />);
   };
-
-  return (
-    <Card className="bg-card border-border hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-[480px] flex flex-col">
+  return <Card className="bg-card border-border hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-[480px] flex flex-col">
       <CardContent className="p-5 flex-1 flex flex-col h-full">
         {/* Header with Avatar and Status - Fixed height section */}
         <div className="flex items-start justify-between mb-4 h-[60px]">
@@ -79,30 +62,17 @@ export const VendorCard: React.FC<VendorCardProps> = ({ vendor }) => {
 
         {/* Service Categories - Fixed height section */}
         <div className="flex flex-wrap gap-1.5 mb-4 min-h-[36px]">
-          {(vendor.service_categories || []).slice(0, 3).map((category) => (
-            <ServiceCategoryChip 
-              key={category} 
-              category={category as ServiceCategory}
-              className="text-xs px-2 py-1" 
-            />
-          ))}
+          {(vendor.service_categories || []).slice(0, 3).map(category => <ServiceCategoryChip key={category} category={category as ServiceCategory} className="text-xs px-2 py-1" />)}
           {/* Fallback to vendor type if no service categories */}
-          {(!vendor.service_categories || vendor.service_categories.length === 0) && vendor.type && (
-            <ServiceCategoryChip 
-              category={vendor.type as ServiceCategory}
-              className="text-xs px-2 py-1" 
-            />
-          )}
+          {(!vendor.service_categories || vendor.service_categories.length === 0) && vendor.type && <ServiceCategoryChip category={vendor.type as ServiceCategory} className="text-xs px-2 py-1" />}
           {/* Show +X more if there are additional categories */}
-          {vendor.service_categories && vendor.service_categories.length > 3 && (
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+          {vendor.service_categories && vendor.service_categories.length > 3 && <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
               +{vendor.service_categories.length - 3} more
-            </span>
-          )}
+            </span>}
         </div>
 
         {/* Rating - Fixed height section */}
-        <div className="flex items-center gap-2 mb-4 h-[20px]">
+        <div className="flex items-center gap-2 mb-4 h-[20px] py-[15px]">
           <div className="flex items-center">
             {renderStars(vendor.average_rating || 0)}
           </div>
@@ -187,6 +157,5 @@ export const VendorCard: React.FC<VendorCardProps> = ({ vendor }) => {
           </Button>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
