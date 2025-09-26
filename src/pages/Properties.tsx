@@ -4,6 +4,7 @@ import { PropertyCard } from '@/components/properties/PropertyCard';
 import { PropertiesFilterBar } from '@/components/properties/PropertiesFilterBar';
 import { AddPropertyDialog } from '@/components/properties/AddPropertyDialog';
 import { PropertyDetailsModal } from '@/components/properties/PropertyDetailsModal';
+import PropertiesTable from '@/components/properties/PropertiesTable';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -243,13 +244,13 @@ const Properties: React.FC = () => {
             ))}
           </div>
         ) : (
-          <Card className="p-6">
-            <div className="text-center text-muted-foreground py-8">
-              <List className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Table view is coming soon</p>
-              <p className="text-sm mt-2">Switch to grid view to see your properties</p>
-            </div>
-          </Card>
+          <PropertiesTable 
+            properties={filteredProperties}
+            onPropertySelect={handleViewDetails}
+            onEditProperty={handleEditProperty}
+            onContactTenant={handleContactTenant}
+            onViewDetails={handleViewDetails}
+          />
         )
       ) : (
         <Card className="p-8">
