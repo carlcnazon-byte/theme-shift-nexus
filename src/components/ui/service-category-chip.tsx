@@ -44,6 +44,11 @@ export const ServiceCategoryChip: React.FC<ServiceCategoryChipProps> = ({
           label: 'Pest',
           className: 'bg-green-100 text-green-700'
         };
+      default:
+        return {
+          label: category,
+          className: 'bg-gray-100 text-gray-700'
+        };
     }
   };
 
