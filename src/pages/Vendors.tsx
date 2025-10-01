@@ -59,7 +59,7 @@ const Vendors = () => {
       try {
         setLoading(true);
         const { data, error } = await supabase
-          .from('service_providers')
+          .from('vendors')
           .select('*')
           .order('average_rating', { ascending: false });
 
@@ -67,10 +67,29 @@ const Vendors = () => {
           throw error;
         }
 
-        // Add computed fields for backward compatibility
+        // Map database fields to interface fields
         const processedData = (data || []).map(vendor => ({
-          ...vendor,
-          email: `contact@${vendor.company_name.toLowerCase().replace(/\s+/g, '')}.com`,
+          numeric_id: vendor.id,
+          company_name: vendor.company_name,
+          address: vendor.address,
+          type: vendor.category,
+          phone_number: vendor.phone_number,
+          emergency_phone_number: vendor.emergency_phone,
+          business_hours: vendor.business_hours,
+          service_categories: vendor.service_categories,
+          license_number: vendor.license_number,
+          is_active: vendor.is_active,
+          is_emergency_available: vendor.is_emergency_available,
+          average_response_time: 30, // Default value, can be computed from ticket_metrics
+          insurance_expires: vendor.insurance_expires,
+          hourly_rate: vendor.hourly_rate ? Number(vendor.hourly_rate) : undefined,
+          emergency_rate: vendor.emergency_rate ? Number(vendor.emergency_rate) : undefined,
+          total_jobs: vendor.total_jobs,
+          average_rating: vendor.average_rating ? Number(vendor.average_rating) : 0,
+          last_assigned: vendor.last_assigned,
+          created_at: vendor.created_at,
+          updated_at: vendor.updated_at,
+          email: vendor.email || `contact@${vendor.company_name.toLowerCase().replace(/\s+/g, '')}.com`,
           on_time_percentage: Math.round(85 + Math.random() * 15), // Random between 85-100%
           jobs_per_month: Math.round((vendor.total_jobs || 0) / 12),
         }));
