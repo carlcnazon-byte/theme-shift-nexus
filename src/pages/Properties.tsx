@@ -123,7 +123,7 @@ const Properties: React.FC = () => {
 
       return true;
     });
-  }, [filters]);
+  }, [properties, filters]);
 
   const handleFilterChange = (newFilters: Partial<PropertyFilters>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
