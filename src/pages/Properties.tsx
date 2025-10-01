@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { PropertyUnit, PropertyFilters, ViewMode, AddPropertyForm } from '@/types/property';
 import { PropertyCard } from '@/components/properties/PropertyCard';
 import { PropertiesFilterBar } from '@/components/properties/PropertiesFilterBar';
@@ -10,92 +10,11 @@ import { Card } from '@/components/ui/card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Grid, List, Plus, Building } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-
-// Mock data
-const mockProperties: PropertyUnit[] = [
-  {
-    id: 1,
-    property_id: 'PROP-001',
-    property_name: 'Sunset Apartments',
-    full_address: '123 Main St, Unit 4A, Springfield, IL 62701',
-    street_address: '123 Main St',
-    unit_number: '4A',
-    address_variations: ['123 Main Street', '123 Main St Apt 4A'],
-    is_active: true,
-    is_occupied: true,
-    tenant_name: 'John Smith',
-    access_notes: 'Gate code: 1234\nKey under mat',
-    parking_info: 'Parking spot A-15',
-    emergency_contact: '(555) 999-0000',
-    manager_name: 'Sarah Wilson',
-    manager_phone: '(555) 123-4567',
-    manager_email: 'sarah@demo.com',
-    created_at: '2024-01-15T10:00:00Z',
-    updated_at: '2024-01-20T14:30:00Z',
-  },
-  {
-    id: 2,
-    property_id: 'PROP-002',
-    property_name: 'Oak Valley Condos',
-    full_address: '456 Oak Ave, Unit B12, Springfield, IL 62702',
-    street_address: '456 Oak Ave',
-    unit_number: 'B12',
-    address_variations: ['456 Oak Avenue'],
-    is_active: true,
-    is_occupied: false,
-    tenant_name: null,
-    access_notes: 'Lockbox code: 5678',
-    parking_info: 'Street parking available',
-    emergency_contact: null,
-    manager_name: 'Mike Johnson',
-    manager_phone: '(555) 987-6543',
-    manager_email: 'mike@demo.com',
-    created_at: '2024-01-10T09:00:00Z',
-    updated_at: '2024-01-18T16:45:00Z',
-  },
-  {
-    id: 3,
-    property_id: 'PROP-003',
-    property_name: 'Pine Ridge Townhomes',
-    full_address: '789 Pine Rd, Unit 15, Springfield, IL 62703',
-    street_address: '789 Pine Rd',
-    unit_number: '15',
-    address_variations: ['789 Pine Road'],
-    is_active: false,
-    is_occupied: false,
-    tenant_name: null,
-    access_notes: null,
-    parking_info: 'Garage included',
-    emergency_contact: '(555) 111-2222',
-    manager_name: 'Lisa Davis',
-    manager_phone: '(555) 456-7890',
-    manager_email: 'lisa@demo.com',
-    created_at: '2024-01-05T11:30:00Z',
-    updated_at: '2024-01-12T13:20:00Z',
-  },
-  {
-    id: 4,
-    property_id: 'PROP-004',
-    property_name: 'Riverside Lofts',
-    full_address: '321 River St, Unit 8C, Springfield, IL 62704',
-    street_address: '321 River St',
-    unit_number: '8C',
-    address_variations: ['321 River Street'],
-    is_active: true,
-    is_occupied: true,
-    tenant_name: 'Emma Johnson',
-    access_notes: 'Buzzer #8C to enter building',
-    parking_info: 'Parking garage level 2',
-    emergency_contact: '(555) 333-4444',
-    manager_name: 'Tom Wilson',
-    manager_phone: '(555) 654-3210',
-    manager_email: 'tom@demo.com',
-    created_at: '2024-01-08T14:15:00Z',
-    updated_at: '2024-01-22T10:30:00Z',
-  },
-];
+import { supabase } from '@/integrations/supabase/client';
 
 const Properties: React.FC = () => {
+  const [properties, setProperties] = useState<PropertyUnit[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<PropertyFilters>({
     search: '',
     is_active: null,
@@ -108,8 +27,73 @@ const Properties: React.FC = () => {
   const [selectedProperty, setSelectedProperty] = useState<PropertyUnit | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
+  // Fetch properties from Supabase
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch properties with tenant information
+        const { data: propertiesData, error: propertiesError } = await supabase
+          .from('properties')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (propertiesError) throw propertiesError;
+
+        // Fetch tenants separately
+        const { data: tenantsData, error: tenantsError } = await supabase
+          .from('tenants')
+          .select('*')
+          .eq('is_active', true);
+
+        if (tenantsError) throw tenantsError;
+
+        // Map database properties to PropertyUnit interface
+        const mappedProperties: PropertyUnit[] = (propertiesData || []).map(prop => {
+          // Find active tenant for this property
+          const tenant = tenantsData?.find(t => t.property_id === prop.id);
+          
+          return {
+            id: prop.id,
+            property_id: prop.property_code,
+            property_name: prop.property_name,
+            full_address: prop.full_address,
+            street_address: prop.street_address,
+            unit_number: tenant?.unit_number || '',
+            address_variations: [], // Not in DB, could be computed if needed
+            is_active: prop.is_active,
+            is_occupied: !!tenant, // Property is occupied if it has an active tenant
+            tenant_name: tenant?.tenant_name || null,
+            access_notes: tenant?.access_instructions || null,
+            parking_info: tenant?.parking_spot || null,
+            emergency_contact: prop.emergency_contact,
+            manager_name: prop.manager_name,
+            manager_phone: prop.manager_phone,
+            manager_email: prop.manager_email,
+            created_at: prop.created_at,
+            updated_at: prop.updated_at,
+          };
+        });
+
+        setProperties(mappedProperties);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load properties. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
   const filteredProperties = useMemo(() => {
-    return mockProperties.filter((property) => {
+    return properties.filter((property) => {
       // Search filter
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
@@ -230,7 +214,14 @@ const Properties: React.FC = () => {
       />
 
       {/* Main Content */}
-      {filteredProperties.length > 0 ? (
+      {loading ? (
+        <Card className="p-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading properties...</p>
+          </div>
+        </Card>
+      ) : filteredProperties.length > 0 ? (
         viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-fr">
             {filteredProperties.map((property) => (
