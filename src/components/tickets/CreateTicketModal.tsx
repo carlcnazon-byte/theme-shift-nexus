@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,29 +8,66 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, AlertCircle, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CreateTicketModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onTicketCreated?: () => void;
 }
 
-export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ isOpen, onClose }) => {
+interface Property {
+  id: number;
+  property_name: string;
+  property_code: string;
+}
+
+export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ isOpen, onClose, onTicketCreated }) => {
   const { toast } = useToast();
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     property: '',
+    unitNumber: '',
     priority: '',
     category: '',
     tenantName: '',
     tenantContact: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (isOpen) {
+      fetchProperties();
+    }
+  }, [isOpen]);
+
+  const fetchProperties = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('properties')
+        .select('id, property_name, property_code')
+        .eq('is_active', true)
+        .order('property_name');
+
+      if (error) throw error;
+      setProperties(data || []);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load properties',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
-    if (!formData.title || !formData.description || !formData.property || !formData.priority) {
+    if (!formData.title || !formData.description || !formData.property || !formData.priority || !formData.unitNumber) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -39,25 +76,69 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ isOpen, on
       return;
     }
 
-    // Here you would typically send the data to your backend
-    console.log('Creating ticket:', formData);
+    setLoading(true);
     
-    toast({
-      title: "Ticket Created",
-      description: "Your maintenance ticket has been successfully created.",
-    });
-    
-    // Reset form and close modal
-    setFormData({
-      title: '',
-      description: '',
-      property: '',
-      priority: '',
-      category: '',
-      tenantName: '',
-      tenantContact: ''
-    });
-    onClose();
+    try {
+      // Generate ticket ID
+      const ticketId = `TK-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`;
+      
+      // Map priority to urgency
+      const urgencyMap: { [key: string]: string } = {
+        'low': 'standard',
+        'medium': 'standard',
+        'high': 'urgent',
+        'urgent': 'emergency'
+      };
+
+      const { error } = await supabase
+        .from('tickets')
+        .insert({
+          ticket_id: ticketId,
+          property_id: parseInt(formData.property),
+          unit_number: formData.unitNumber,
+          issue_description: formData.description,
+          issue_summary: formData.title,
+          category: formData.category || 'maintenance',
+          urgency: urgencyMap[formData.priority] || 'standard',
+          status: 'open',
+          caller_name: formData.tenantName || null,
+          caller_phone: formData.tenantContact || 'N/A',
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Ticket Created",
+        description: `Ticket ${ticketId} has been successfully created.`,
+      });
+      
+      // Reset form and close modal
+      setFormData({
+        title: '',
+        description: '',
+        property: '',
+        unitNumber: '',
+        priority: '',
+        category: '',
+        tenantName: '',
+        tenantContact: ''
+      });
+      
+      if (onTicketCreated) {
+        onTicketCreated();
+      }
+      
+      onClose();
+    } catch (error) {
+      console.error('Error creating ticket:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create ticket. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -95,10 +176,10 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ isOpen, on
                       <SelectValue placeholder="Select priority" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="urgent">Urgent</SelectItem>
+                      <SelectItem value="low">Low (Standard)</SelectItem>
+                      <SelectItem value="medium">Medium (Standard)</SelectItem>
+                      <SelectItem value="high">High (Urgent)</SelectItem>
+                      <SelectItem value="urgent">Urgent (Emergency)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -131,16 +212,26 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ isOpen, on
                       <SelectValue placeholder="Select property" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="789-park-avenue">789 Park Avenue</SelectItem>
-                      <SelectItem value="456-oak-street">456 Oak Street</SelectItem>
-                      <SelectItem value="123-main-street">123 Main Street</SelectItem>
-                      <SelectItem value="321-industrial-blvd">321 Industrial Blvd</SelectItem>
-                      <SelectItem value="654-metro-plaza">654 Metro Plaza</SelectItem>
+                      {properties.map((property) => (
+                        <SelectItem key={property.id} value={property.id.toString()}>
+                          {property.property_name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="unitNumber">Unit Number *</Label>
+                  <Input
+                    id="unitNumber"
+                    placeholder="e.g., 4B"
+                    value={formData.unitNumber}
+                    onChange={(e) => handleInputChange('unitNumber', e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
                   <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
@@ -156,7 +247,6 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ isOpen, on
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
             </CardContent>
           </Card>
 
@@ -191,11 +281,11 @@ export const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ isOpen, on
           </Card>
 
           <DialogFooter className="gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
               Cancel
             </Button>
-            <Button type="submit">
-              Create Ticket
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Creating...' : 'Create Ticket'}
             </Button>
           </DialogFooter>
         </form>

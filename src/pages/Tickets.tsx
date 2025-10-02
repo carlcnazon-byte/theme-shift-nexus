@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Grid, Table, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TicketsFilterBar } from '@/components/tickets/TicketsFilterBar';
@@ -6,6 +6,8 @@ import { TicketsTable } from '@/components/tickets/TicketsTable';
 import { TicketGrid } from '@/components/tickets/TicketGrid';
 import { TicketDrawer } from '@/components/tickets/TicketDrawer';
 import { CreateTicketModal } from '@/components/tickets/CreateTicketModal';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export interface Ticket {
   ticket_id: string;
@@ -28,9 +30,12 @@ export interface TicketFilters {
 }
 
 const Tickets = () => {
+  const { toast } = useToast();
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<TicketFilters>({
     search: '',
     property: 'all',
@@ -39,77 +44,52 @@ const Tickets = () => {
     dateRange: null,
   });
 
-  // Sample ticket data
-  const sampleTickets: Ticket[] = [
-    {
-      ticket_id: 'TK-2024-001',
-      property_name: 'Sunset Apartments',
-      unit_address: '123 Oak Street, Apt 4B',
-      issue_description: 'Water leak in bathroom ceiling causing damage to fixtures and walls',
-      urgency: 'emergency',
-      status: 'in_progress',
-      service_provider: 'Emergency Plumbing Co.',
-      created_at: '2024-01-15T08:30:00Z',
-      updated_at: '2024-01-15T10:15:00Z',
-    },
-    {
-      ticket_id: 'TK-2024-002',
-      property_name: 'Riverside Condos',
-      unit_address: '456 River Road, Unit 12',
-      issue_description: 'HVAC system not heating properly, tenants reporting cold temperatures',
-      urgency: 'urgent',
-      status: 'vendor_notified',
-      service_provider: 'Climate Control Experts',
-      created_at: '2024-01-14T14:22:00Z',
-      updated_at: '2024-01-14T16:45:00Z',
-    },
-    {
-      ticket_id: 'TK-2024-003',
-      property_name: 'Garden View Townhouse',
-      unit_address: '789 Park Avenue',
-      issue_description: 'Routine maintenance required for common area lighting fixtures',
-      urgency: 'standard',
-      status: 'resolved',
-      service_provider: 'General Maintenance LLC',
-      created_at: '2024-01-13T09:15:00Z',
-      updated_at: '2024-01-13T17:30:00Z',
-    },
-    {
-      ticket_id: 'TK-2024-004',
-      property_name: 'Metro Lofts',
-      unit_address: '321 Industrial Blvd, Loft 5A',
-      issue_description: 'Electrical outlet sparking in kitchen area, potential fire hazard',
-      urgency: 'emergency',
-      status: 'open',
-      created_at: '2024-01-12T16:45:00Z',
-      updated_at: '2024-01-12T16:45:00Z',
-    },
-    {
-      ticket_id: 'TK-2024-005',
-      property_name: 'Downtown Plaza',
-      unit_address: '654 Metro Plaza, Suite 201',
-      issue_description: 'Window blind replacement needed in conference room',
-      urgency: 'standard',
-      status: 'vendor_notified',
-      service_provider: 'Interior Solutions',
-      created_at: '2024-01-11T11:20:00Z',
-      updated_at: '2024-01-11T13:10:00Z',
-    },
-    {
-      ticket_id: 'TK-2024-006',
-      property_name: 'Riverside Condos',
-      unit_address: '456 River Road, Unit 8',
-      issue_description: 'Garbage disposal making unusual noise and not functioning properly',
-      urgency: 'urgent',
-      status: 'in_progress',
-      service_provider: 'Kitchen & Bath Repair',
-      created_at: '2024-01-10T13:30:00Z',
-      updated_at: '2024-01-10T15:20:00Z',
-    },
-  ];
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
+  const fetchTickets = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('tickets')
+        .select(`
+          *,
+          properties (property_name),
+          tenants (unit_number),
+          vendors (company_name)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const formattedTickets: Ticket[] = (data || []).map((ticket: any) => ({
+        ticket_id: ticket.ticket_id,
+        property_name: ticket.properties?.property_name || 'Unknown Property',
+        unit_address: ticket.tenants?.unit_number || ticket.unit_number || 'N/A',
+        issue_description: ticket.issue_description,
+        urgency: ticket.urgency as 'emergency' | 'urgent' | 'standard',
+        status: ticket.status as 'open' | 'vendor_notified' | 'in_progress' | 'resolved' | 'canceled',
+        service_provider: ticket.vendors?.company_name,
+        created_at: ticket.created_at,
+        updated_at: ticket.updated_at,
+      }));
+
+      setTickets(formattedTickets);
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load tickets',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredTickets = useMemo(() => {
-    return sampleTickets.filter((ticket) => {
+    return tickets.filter((ticket) => {
       const matchesSearch = filters.search === '' || 
         ticket.ticket_id.toLowerCase().includes(filters.search.toLowerCase()) ||
         ticket.property_name.toLowerCase().includes(filters.search.toLowerCase()) ||
@@ -127,7 +107,7 @@ const Tickets = () => {
 
       return matchesSearch && matchesProperty && matchesUrgency && matchesStatus && matchesDateRange;
     });
-  }, [sampleTickets, filters]);
+  }, [tickets, filters]);
 
   const handleTicketSelect = (ticket: Ticket) => {
     setSelectedTicket(ticket);
@@ -227,6 +207,7 @@ const Tickets = () => {
       <CreateTicketModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+        onTicketCreated={fetchTickets}
       />
     </div>
   );
