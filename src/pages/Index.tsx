@@ -130,30 +130,16 @@ const Index = () => {
     { name: 'Security Service', phone: '555-0789', role: 'Security' }
   ];
 
-  // Calculate real ticket volume for last 7 days
-  const chartData = useMemo(() => {
-    const last7Days = [];
-    const today = new Date();
-    
-    for (let i = 6; i >= 0; i--) {
-      const date = subDays(today, i);
-      const dayStart = startOfDay(date);
-      const dayEnd = new Date(dayStart);
-      dayEnd.setHours(23, 59, 59, 999);
-      
-      const count = tickets.filter(ticket => {
-        const ticketDate = new Date(ticket.created_at);
-        return ticketDate >= dayStart && ticketDate <= dayEnd;
-      }).length;
-      
-      last7Days.push({
-        day: format(date, 'EEE'),
-        tickets: count
-      });
-    }
-    
-    return last7Days;
-  }, [tickets]);
+  // Mock data for ticket volume (last 7 days)
+  const chartData = [
+    { day: 'Thu', tickets: 8 },
+    { day: 'Fri', tickets: 3 },
+    { day: 'Sat', tickets: 12 },
+    { day: 'Sun', tickets: 12 },
+    { day: 'Mon', tickets: 10 },
+    { day: 'Tue', tickets: 5 },
+    { day: 'Wed', tickets: 2 }
+  ];
 
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8">
