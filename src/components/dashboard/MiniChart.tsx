@@ -19,7 +19,7 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data }) => {
         <CardTitle className="text-foreground text-lg">Ticket Volume (Last 7 Days)</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-end justify-between h-32 space-x-2">
+        <div className="flex items-end justify-between h-48 gap-4">
           {data.map((item, index) => {
             const height = (item.tickets / maxTickets) * 100;
             const isMaxDay = item.tickets === maxTickets && item.tickets > 0;
