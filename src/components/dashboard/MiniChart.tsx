@@ -22,14 +22,21 @@ export const MiniChart: React.FC<MiniChartProps> = ({ data }) => {
         <div className="flex items-end justify-between h-32 space-x-2">
           {data.map((item, index) => {
             const height = (item.tickets / maxTickets) * 100;
+            const isMaxDay = item.tickets === maxTickets && item.tickets > 0;
             return (
               <div key={index} className="flex flex-col items-center flex-1">
                 <div 
-                  className="w-full bg-gradient-to-t from-primary to-primary/50 rounded-t-md transition-all duration-300 hover:from-primary/80 hover:to-primary/40 min-h-[4px]"
+                  className={`w-full rounded-t-md transition-all duration-300 min-h-[4px] ${
+                    isMaxDay 
+                      ? 'bg-gradient-to-t from-destructive to-destructive/50 hover:from-destructive/80 hover:to-destructive/40'
+                      : 'bg-gradient-to-t from-primary to-primary/50 hover:from-primary/80 hover:to-primary/40'
+                  }`}
                   style={{ height: `${Math.max(height, 4)}%` }}
                 />
                 <div className="mt-2 text-center">
-                  <p className="text-xs font-medium text-foreground">{item.tickets}</p>
+                  <p className={`text-xs font-medium ${isMaxDay ? 'text-destructive' : 'text-foreground'}`}>
+                    {item.tickets}
+                  </p>
                   <p className="text-xs text-muted-foreground">{item.day}</p>
                 </div>
               </div>

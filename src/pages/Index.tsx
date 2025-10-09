@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
 import { KPICard } from '@/components/dashboard/KPICard';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
@@ -6,6 +6,7 @@ import { QuickActionsPanel } from '@/components/dashboard/QuickActionsPanel';
 import { MiniChart } from '@/components/dashboard/MiniChart';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
+import { startOfDay, subDays, format } from 'date-fns';
 
 const Index = () => {
   const [tickets, setTickets] = useState<any[]>([]);
@@ -129,15 +130,30 @@ const Index = () => {
     { name: 'Security Service', phone: '555-0789', role: 'Security' }
   ];
 
-  const chartData = [
-    { day: 'Mon', tickets: 45 },
-    { day: 'Tue', tickets: 52 },
-    { day: 'Wed', tickets: 38 },
-    { day: 'Thu', tickets: 61 },
-    { day: 'Fri', tickets: 55 },
-    { day: 'Sat', tickets: 28 },
-    { day: 'Sun', tickets: 22 }
-  ];
+  // Calculate real ticket volume for last 7 days
+  const chartData = useMemo(() => {
+    const last7Days = [];
+    const today = new Date();
+    
+    for (let i = 6; i >= 0; i--) {
+      const date = subDays(today, i);
+      const dayStart = startOfDay(date);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setHours(23, 59, 59, 999);
+      
+      const count = tickets.filter(ticket => {
+        const ticketDate = new Date(ticket.created_at);
+        return ticketDate >= dayStart && ticketDate <= dayEnd;
+      }).length;
+      
+      last7Days.push({
+        day: format(date, 'EEE'),
+        tickets: count
+      });
+    }
+    
+    return last7Days;
+  }, [tickets]);
 
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8">
@@ -171,7 +187,7 @@ const Index = () => {
       </div>
 
       {/* Mini Chart Section */}
-      <MiniChart data={chartData} />
+      {!loading && <MiniChart data={chartData} />}
 
       {/* Main Content - Activity Feed + Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
