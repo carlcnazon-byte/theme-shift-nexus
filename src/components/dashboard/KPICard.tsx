@@ -11,6 +11,7 @@ interface KPICardProps {
     value: number;
     isPositive: boolean;
   };
+  badge?: string;
 }
 
 export const KPICard: React.FC<KPICardProps> = ({ 
@@ -18,7 +19,8 @@ export const KPICard: React.FC<KPICardProps> = ({
   value, 
   icon, 
   gradient,
-  trend 
+  trend,
+  badge
 }) => {
   const renderIcon = () => {
     if (typeof icon === 'string') {
@@ -46,6 +48,11 @@ export const KPICard: React.FC<KPICardProps> = ({
                 </span>
               )}
             </div>
+            {badge && (
+              <span className="text-xs text-white/80 bg-white/15 px-2 py-1 rounded-full inline-block">
+                {badge}
+              </span>
+            )}
           </div>
           <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm flex-shrink-0">
             {renderIcon()}

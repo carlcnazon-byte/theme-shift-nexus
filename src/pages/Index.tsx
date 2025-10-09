@@ -1,40 +1,73 @@
-import React from 'react';
-import { BarChart, Clock, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BarChart, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
 import { KPICard } from '@/components/dashboard/KPICard';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { QuickActionsPanel } from '@/components/dashboard/QuickActionsPanel';
 import { MiniChart } from '@/components/dashboard/MiniChart';
+import { supabase } from '@/integrations/supabase/client';
+import { Badge } from '@/components/ui/badge';
 
 const Index = () => {
-  // Sample dashboard data
+  const [tickets, setTickets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
+  const fetchTickets = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tickets')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setTickets(data || []);
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate ticket stats
+  const totalTickets = tickets.length;
+  const activeTickets = tickets.filter(t => t.status !== 'resolved' && t.status !== 'canceled').length;
+  const emergencyTickets = tickets.filter(t => t.urgency === 'emergency' && t.status !== 'resolved').length;
+  const urgentTickets = tickets.filter(t => t.urgency === 'urgent' && t.status !== 'resolved').length;
+  const resolvedTickets = tickets.filter(t => t.status === 'resolved').length;
+  const openTickets = tickets.filter(t => t.status === 'open').length;
+  const inProgressTickets = tickets.filter(t => t.status === 'in_progress').length;
+
   const kpiData = [
     {
-      title: 'Active Tickets',
-      value: '247',
+      title: 'Total Tickets',
+      value: totalTickets.toString(),
       icon: BarChart,
-      gradient: 'bg-gradient-to-br from-teal-500 to-teal-600',
-      trend: { value: 12, isPositive: true }
+      gradient: 'bg-gradient-to-br from-primary to-primary/80',
+      badge: activeTickets > 0 ? `${activeTickets} active` : undefined
     },
     {
-      title: 'Urgent Issues',
-      value: '18',
-      icon: '🚨',
-      gradient: 'bg-gradient-to-br from-amber-500 to-amber-600',
-      trend: { value: 5, isPositive: false }
+      title: 'Emergency',
+      value: emergencyTickets.toString(),
+      icon: AlertTriangle,
+      gradient: 'bg-gradient-to-br from-destructive to-destructive/80',
+      badge: emergencyTickets > 0 ? 'Needs attention' : undefined
     },
     {
-      title: 'Response Time',
-      value: '2.4h',
+      title: 'Urgent',
+      value: urgentTickets.toString(),
       icon: Clock,
-      gradient: 'bg-gradient-to-br from-cyan-500 to-cyan-600',
-      trend: { value: 8, isPositive: true }
+      gradient: 'bg-gradient-to-br from-amber-500 to-amber-600',
+      badge: urgentTickets > 0 ? 'High priority' : undefined
     },
     {
-      title: 'Vendor Performance',
-      value: '94%',
-      icon: '⭐',
+      title: 'Resolved',
+      value: resolvedTickets.toString(),
+      icon: CheckCircle,
       gradient: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
-      trend: { value: 3, isPositive: true }
+      badge: `${Math.round((resolvedTickets / (totalTickets || 1)) * 100)}% complete`
     }
   ];
 
@@ -110,12 +143,24 @@ const Index = () => {
     <div className="space-y-4 sm:space-y-6 lg:space-y-8">
       {/* Header */}
       <div className="space-y-1 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-          Property Management Dashboard
-        </h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
-          Monitor tickets, track performance, and manage your properties efficiently.
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+              Property Management Dashboard
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Monitor tickets, track performance, and manage your properties efficiently.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-sm">
+              {openTickets} Open
+            </Badge>
+            <Badge variant="secondary" className="text-sm">
+              {inProgressTickets} In Progress
+            </Badge>
+          </div>
+        </div>
       </div>
 
       {/* KPI Cards - Responsive Grid */}
